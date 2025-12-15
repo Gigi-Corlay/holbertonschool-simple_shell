@@ -1,13 +1,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+
 /**
-* Affiche $ comme prompt
-* Lit une ligne depuis l’utilisateur avec getline
-* Affiche la ligne sur la ligne suivante
-* Gère EOF / Ctrl+D pour sortir
-* Libère la mémoire à la fin
-*/
+ * main - simple shell prompt
+ *
+ * Description:
+ *   Affiche un prompt "$ " et attend que l'utilisateur saisisse une commande.
+ *   Lit la ligne saisie avec getline.
+ *   Affiche la ligne entrée sur la ligne suivante.
+ *   La lecture continue jusqu'à EOF (Ctrl+D) ou une erreur.
+ *   Libère la mémoire allouée pour la ligne à la fin.
+ *
+ * Return: 0 (success)
+ */
 int main(void)
 {
 	/* Pointeur pour stocker la ligne lue*/
@@ -17,26 +23,16 @@ int main(void)
 	size_t len = 0;
 	/* nombre de caractères lus */
 	ssize_t nread;
-	/* boucle infinie pour attendre les commandes. */
-	while (1)
-	{
+
 	/* Affiche le prompt */
 	printf("$ ");
-	/* Force l'affichage */
-	fflush(stdout);
-	/**
-	* LIRE LA LIGNE
-	 * &line → getline peut allouer/réallouer le buffer
-	 * &len → taille actuelle du buffer
-	 * stdin → lire depuis l’entrée standard
-	*/
-	nread = getline(&line, &len, stdin);
-	/* EOF ou erreur */
-	if (nread == -1)
-	/*sortir de la boucle quand EOF (Ctrl+D).*/
-		break;
-	/* Affiche la ligne */
-	printf("%s", line);
+	/* boucle conditionnée par getline */
+	while ((nread = getline(&line, &len, stdin)) != -1)
+	{
+		/* Affiche la ligne */
+		printf("%s", line);
+		/* prompt pour la prochaine commande */
+		printf("$ ");
 	}
 	/* libérer la mémoire allouée par getline */
 	free(line);
