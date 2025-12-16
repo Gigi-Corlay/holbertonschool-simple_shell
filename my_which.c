@@ -11,19 +11,19 @@
  */
 char *get_path_from_env(char **envp)
 {
-    int i, j;
+	int i, j;
 
-    for (i = 0; envp[i] != NULL; i++)
-    {
-        for (j = 0; j < 5; j++)
-        {
-            if (envp[i][j] != "PATH="[j])
-                break;
-        }
-        if (j == 5)
-            return (envp[i] + 5);
-    }
-    return NULL;
+	for (i = 0; envp[i] != NULL; i++)
+	{
+		for (j = 0; j < 5; j++)
+		{
+			if (envp[i][j] != "PATH="[j])
+				break;
+		}
+		if (j == 5)
+			return (envp[i] + 5);
+	}
+	return NULL;
 }
 
 /**
@@ -34,24 +34,24 @@ char *get_path_from_env(char **envp)
  */
 char *_strdup(char *str)
 {
-    int len = 0, i;
-    char *copy;
+	int len = 0, i;
+	char *copy;
 
-    if (!str)
-        return NULL;
+	if (!str)
+		return NULL;
 
-    while (str[len] != '\0')
-        len++;
+	while (str[len] != '\0')
+		len++;
 
-    copy = malloc(len + 1);
-    if (!copy)
-        return NULL;
+	copy = malloc(len + 1);
+	if (!copy)
+		return NULL;
 
-    for (i = 0; i < len; i++)
-        copy[i] = str[i];
+	for (i = 0; i < len; i++)
+		copy[i] = str[i];
 
-    copy[len] = '\0';
-    return copy;
+	copy[len] = '\0';
+	return copy;
 }
 
 /**
@@ -63,49 +63,49 @@ char *_strdup(char *str)
  */
 char *_which(char *command, char **envp)
 {
-    char *path, *path_copy, *token, *full_path;
-    int len;
+	char *path, *path_copy, *token, *full_path;
+	int len;
 
-    /* Si command contient un '/', retourner une copie */
-    for (int i = 0; command[i]; i++)
-    {
-        if (command[i] == '/')
-            return _strdup(command);
-    }
+	/* Si command contient un '/', retourner une copie */
+	for (int i = 0; command[i]; i++)
+	{
+		if (command[i] == '/')
+			return _strdup(command);
+	}
 
-    /* Récupérer PATH depuis envp */
-    path = get_path_from_env(envp);
-    if (!path)
-        return NULL;
+	/* Récupérer PATH depuis envp */
+	path = get_path_from_env(envp);
+	if (!path)
+		return NULL;
 
-    path_copy = _strdup(path);
-    if (!path_copy)
-        return NULL;
+	path_copy = _strdup(path);
+	if (!path_copy)
+		return NULL;
 
-    token = strtok(path_copy, ":");
-    while (token)
-    {
+	token = strtok(path_copy, ":");
+	while (token)
+	{
 		/* '/' + '\0' */
-        len = strlen(token) + strlen(command) + 2; 
-        full_path = malloc(len);
-        if (!full_path)
-        {
-            free(path_copy);
-            return NULL;
-        }
+		len = strlen(token) + strlen(command) + 2; 
+		full_path = malloc(len);
+		if (!full_path)
+		{
+			free(path_copy);
+			return NULL;
+		}
 
-        sprintf(full_path, "%s/%s", token, command);
+		sprintf(full_path, "%s/%s", token, command);
 
-        if (access(full_path, X_OK) == 0)
-        {
-            free(path_copy);
-            return full_path;
-        }
+		if (access(full_path, X_OK) == 0)
+		{
+			free(path_copy);
+			return full_path;
+		}
 
-        free(full_path);
-        token = strtok(NULL, ":");
-    }
+		free(full_path);
+		token = strtok(NULL, ":");
+	}
 
-    free(path_copy);
-    return NULL;
+	free(path_copy);
+	return NULL;
 }
