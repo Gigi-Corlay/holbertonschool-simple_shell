@@ -5,7 +5,6 @@
 ## 📌 Description
 
 This project consists of creating a **minimal Unix shell** that behaves like /bin/sh for basic functionalities. The shell reads commands from the standard input, parses them, and executes them using system calls.
-----------
 
 ## What is a Shell?
 
