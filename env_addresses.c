@@ -11,8 +11,8 @@ extern char **environ;
 */
 int main(int argc, char **argv, char **env)
 {
-    (void)argc;
-    (void)argv;
+	(void)argc;
+	(void)argv;
 	int n = 0, i;
 	char **copy;
 
