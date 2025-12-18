@@ -24,7 +24,7 @@ char *_path(const char *command)
 	
 	token = strtok(path_copy, ":");
 		while (token)
-	{
+		{
 		len = strlen(token) + strlen(command) + 2;
 
 		full_path = malloc(len);
@@ -44,7 +44,7 @@ char *_path(const char *command)
 
 		free(full_path);
 		token = strtok(NULL, ":");
-	}
+		}
 
 	free(path_copy);
 	return NULL;
