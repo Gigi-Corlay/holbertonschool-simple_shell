@@ -52,7 +52,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-
+> This flowchart illustrates the main process of the shell, from reading the command to parsing, executing built-ins, searching the PATH, and finally executing the program.
 ```mermaid
 flowchart TD
     A[Start] --> B{"isatty(STDIN_FILENO)"}
@@ -91,7 +91,7 @@ flowchart TD
     S -- Child --> T[Execute command with execve]
     T --> U{execve failed}
     U -- Yes --> V[Print error and exit]
-    U -- No --> W[Program running]
+    U -- No --> W[Child process executes]
 
     S -- Parent --> X[Wait child]
     X --> E
