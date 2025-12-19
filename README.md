@@ -52,6 +52,8 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
+> Diagramme du flux principal (lecture → parsing → builtin → recherche PATH → exécution)
+
 ```mermaid
 flowchart TD
     A[Start] --> B{"if (isatty(STDIN_FILENO))"}
