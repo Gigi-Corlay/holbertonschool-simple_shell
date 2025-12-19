@@ -55,45 +55,45 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 
 ```mermaid
 flowchart TD
-    A[Start] --> B{isatty(STDIN_FILENO)?}
+    A[Start] --> B{isatty STDIN}
 
     B -- Yes --> C[Interactive mode]
-    B -- No --> D[Non-interactive mode]
+    B -- No --> D[Non interactive mode]
 
-    C --> E[while (1)]
+    C --> E[Main loop]
     D --> E
 
-    E --> F[Print prompt "$ "]
-    F --> G[Read input with getline]
+    E --> F[Print prompt]
+    F --> G[Read input]
 
-    G --> H{EOF or error?}
+    G --> H{EOF or error}
     H -- Yes --> I[Exit shell]
-    H -- No --> J[Remove trailing newline]
+    H -- No --> J[Remove newline]
 
-    J --> K[Parse input (tokenize command)]
+    J --> K[Parse command]
 
-    K --> L{Empty command?}
+    K --> L{Empty command}
     L -- Yes --> E
 
-    L -- No --> M{Built-in command?}
-    M -- Yes --> N[Execute built-in]
+    L -- No --> M{Built in command}
+    M -- Yes --> N[Execute built in]
     N --> E
 
-    M -- No --> O[Search command in PATH]
+    M -- No --> O[Search PATH]
 
-    O --> P{Command found?}
-    P -- No --> Q[Print error: command not found]
+    O --> P{Command found}
+    P -- No --> Q[Command not found]
     Q --> E
 
-    P -- Yes --> R[fork()]
+    P -- Yes --> R[Fork process]
 
-    R --> S{Child or parent?}
-    S -- Child --> T[Execute command with execve]
-    T --> U{execve failed?}
-    U -- Yes --> V[perror and exit]
+    R --> S{Child or Parent}
+    S -- Child --> T[Execute command]
+    T --> U{Execution failed}
+    U -- Yes --> V[Print error and exit]
     U -- No --> W[Program running]
 
-    S -- Parent --> X[wait()]
+    S -- Parent --> X[Wait child]
     X --> E
 ```
 
