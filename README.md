@@ -55,7 +55,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 
 ```mermaid
 flowchart TD
-    A[Start] --> B{isatty STDIN}
+    A[Start] --> B{isatty(STDIN_FILENO)}
 
     B -- Yes --> C[Interactive mode]
     B -- No --> D[Non interactive mode]
@@ -68,7 +68,7 @@ flowchart TD
 
     G --> H{EOF or error}
     H -- Yes --> I[Exit shell]
-    H -- No --> J[Remove newline]
+    H -- No --> J[Remove trailing newline]
 
     J --> K[Parse command]
 
