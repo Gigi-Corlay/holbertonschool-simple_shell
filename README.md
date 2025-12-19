@@ -70,7 +70,7 @@ flowchart TD
     H -- Yes --> I[Exit shell]
     H -- No --> J[Remove trailing newline]
 
-    J --> K[Parse command]
+    J --> K["Parse input (tokenize command)"]
 
     K --> L{Empty command}
     L -- Yes --> E
@@ -79,17 +79,17 @@ flowchart TD
     M -- Yes --> N[Execute built in]
     N --> E
 
-    M -- No --> O[Search PATH]
+    M -- No --> O[Search command in PATH]
 
     O --> P{Command found}
-    P -- No --> Q[Command not found]
+    P -- No --> Q[Print error: command not found]
     Q --> E
 
     P -- Yes --> R[Fork process]
 
     R --> S{Child or Parent}
-    S -- Child --> T[Execute command]
-    T --> U{Execution failed}
+    S -- Child --> T[Execute command with execve]
+    T --> U{execve failed}
     U -- Yes --> V[Print error and exit]
     U -- No --> W[Program running]
 
