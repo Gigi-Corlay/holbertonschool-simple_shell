@@ -52,26 +52,25 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-> Diagramme du flux principal (lecture → parsing → builtin → recherche PATH → exécution)
 
 ```mermaid
 flowchart TD
-    A[Start] --> B{"if (isatty(STDIN_FILENO))"}
+    A[Start] --> B{isatty(STDIN_FILENO)?}
 
     B -- Yes --> C[Interactive mode]
     B -- No --> D[Non-interactive mode]
 
-    C --> E["while (1)"]
+    C --> E[while (1)]
     D --> E
 
-    E --> F["Print prompt $ "]
+    E --> F[Print prompt "$ "]
     F --> G[Read input with getline]
 
     G --> H{EOF or error?}
     H -- Yes --> I[Exit shell]
     H -- No --> J[Remove trailing newline]
 
-    J --> K["Parse input (tokenize command)"]
+    J --> K[Parse input (tokenize command)]
 
     K --> L{Empty command?}
     L -- Yes --> E
@@ -83,10 +82,10 @@ flowchart TD
     M -- No --> O[Search command in PATH]
 
     O --> P{Command found?}
-    P -- No --> Q["Print error: command not found"]
+    P -- No --> Q[Print error: command not found]
     Q --> E
 
-    P -- Yes --> R["fork()"]
+    P -- Yes --> R[fork()]
 
     R --> S{Child or parent?}
     S -- Child --> T[Execute command with execve]
@@ -94,19 +93,8 @@ flowchart TD
     U -- Yes --> V[perror and exit]
     U -- No --> W[Program running]
 
-    S -- Parent --> X["wait()"]
+    S -- Parent --> X[wait()]
     X --> E
-
-**The shell follows this general execution flow:**
-
-* Display a prompt in interactive mode
-* Read user input using `getline`
-* Remove the trailing newline and tokenize the command
-* Check for built-in commands
-* Search for the command in the `PATH`
-* Create a child process using `fork`
-* Execute the command using `execve`
-* Wait for the child process to terminate
 ```
 
 ---
