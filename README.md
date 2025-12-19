@@ -52,7 +52,51 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-![Flowchart Shell](image/Flowchart_Shell.webp)
+---
+config:
+  theme: base
+---
+flowchart TD
+    A[Start] --> B{"if (isatty(STDIN_FILENO))"}
+
+    B -- Yes --> C[Interactive mode]
+    B -- No --> D[Non-interactive mode]
+
+    C --> E["while (1)"]
+    D --> E
+
+    E --> F["Print prompt $ "]
+    F --> G[Read input with getline]
+
+    G --> H{EOF or error?}
+    H -- Yes --> I[Exit shell]
+    H -- No --> J[Remove trailing newline]
+
+    J --> K["Parse input (tokenize command)"]
+
+    K --> L{Empty command?}
+    L -- Yes --> E
+
+    L -- No --> M{Built-in command?}
+    M -- Yes --> N[Execute built-in]
+    N --> E
+
+    M -- No --> O[Search command in PATH]
+
+    O --> P{Command found?}
+    P -- No --> Q["Print error: command not found"]
+    Q --> E
+
+    P -- Yes --> R["fork()"]
+
+    R --> S{Child or parent?}
+    S -- Child --> T[Execute command with execve]
+    T --> U{execve failed?}
+    U -- Yes --> V[perror and exit]
+    U -- No --> W[Program running]
+
+    S -- Parent --> X["wait()"]
+    X --> E
 
 **The shell follows this general execution flow:**
 
