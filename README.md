@@ -1,5 +1,4 @@
-
-# 🐚 Simple Shell (hsh)
+# 🐚 Simple Shell
 **Language:** C
 
 **Coding style:** Betty
@@ -27,14 +26,10 @@
 ---
 
 ## 📌 Description
-
-**Simple Shell** is a minimalist UNIX command interpreter written in **C**.
-It reproduces the basic behavior of a standard shell such as `/bin/sh` for common use cases.
-
-This project was developed as part of the **Holberton School** curriculum to gain a deeper understanding of how shells work internally, including process creation, command parsing, execution, and environment handling.
-
-The shell reads user input, parses commands, searches for executables in the `PATH`, and executes them using system calls such as `fork`, `execve`, and `wait`.
-For standard use cases, its behavior is intended to be consistent with `/bin/sh`.
+**Simple Shell** is a minimalist UNIX command interpreter written in **C**. 
+It replicates the basic behavior of a standard shell (`/bin/sh`) for typical commands. 
+The shell reads user input, parses it into commands, searches for executables in the `PATH`, and runs them using system calls like `fork`, `execvev`, and `wait`.
+Its behavior is designed to match standard shell behavior for common use cases
 
 ---
 
@@ -53,17 +48,50 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-![Flowchart Shell](assets/image/Flowchart_Shell.webp)
-**The shell follows this general execution flow:**
+> This flowchart illustrates the shell’s main process: reading the command, parsing it, executing built-ins, searching the PATH, and executing the command.
+```mermaid
+flowchart TD
+    A[Start] --> B{"isatty(STDIN_FILENO)"}
 
-* Display a prompt in interactive mode
-* Read user input using `getline`
-* Remove the trailing newline and tokenize the command
-* Check for built-in commands
-* Search for the command in the `PATH`
-* Create a child process using `fork`
-* Execute the command using `execve`
-* Wait for the child process to terminate
+    B -- Yes --> C[Interactive mode]
+    B -- No --> D[Non interactive mode]
+
+    C --> E["while (1)"]
+    D --> E
+
+    E --> F[Print prompt $]
+    F --> G[Read input with getline]
+
+    G --> H{EOF or error}
+    H -- Yes --> I[Exit shell]
+    H -- No --> J[Remove trailing newline]
+
+    J --> K["Parse input (tokenize command)"]
+
+    K --> L{Empty command}
+    L -- Yes --> E
+
+    L -- No --> M{Built in command}
+    M -- Yes --> N[Execute built in]
+    N --> E
+
+    M -- No --> O[Search command in PATH]
+
+    O --> P{Command found}
+    P -- No --> Q[Print error: command not found]
+    Q --> E
+
+    P -- Yes --> R[Fork process]
+
+    R --> S{Child or Parent}
+    S -- Child --> T[Execute command with execve]
+    T --> U{execve failed}
+    U -- Yes --> V[Print error and exit]
+    U -- No --> W[Child process executes]
+
+    S -- Parent --> X[Wait child]
+    X --> E
+```
 
 ---
 
@@ -161,10 +189,10 @@ hsh main.c shell.c test_ls_2
 ---
 
 ## ✅ Checks
-- Work in groupe to create a **test suite**
+- Work in group to create a **test suite**
 - Cover both **standard cases** and **edge cases**
 - Validate all mandatory requirements
-- Matches the **project statement wording**
+- Follows the **project specification strictly**
 - Clear separation: compilation / interactive / non-interactive
 - Uses **exact examples** from the subject
 - Professional, readable, and checker-friendly
@@ -213,7 +241,7 @@ man ./man_1_simple_shell
 - No pipes (`|`)
 - No redirections (`>`, `<`)
 - No command chaining `;`, `&&`, `||`)
-- No quote handling
+- Commands with quotes are not supported
 
 ---
 

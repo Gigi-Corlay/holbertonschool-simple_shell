@@ -1,0 +1,58 @@
+.TH simple_shell 1 "April 2025" "Version 1.0" "Simple Shell Manual"
+
+.SH NAME
+simple_shell \- a minimal Unix shell implemented in C
+
+.SH SYNOPSIS
+.B ./hsh
+.RI [command [arguments] ...]
+
+.SH DESCRIPTION
+.B simple_shell
+is a minimal Unix command interpreter written in C that reproduces the behavior of
+.BR /bin/sh .
+
+It allows executing Unix commands in both interactive and non-interactive modes.
+
+The shell supports:
+.IP \[bu] 2
+Executing programs using .BR execve (2)
+.IP \[bu] 2
+Interactive mode with a prompt displayed (.B $)
+.IP \[bu] 2
+Non-interactive mode (reading commands from a pipe or a file)
+.IP \[bu] 2
+Built-in commands: .B exit , .B env
+.IP \[bu] 2
+Automatic searching for commands in directories listed in the .B PATH variable
+
+.SH USAGE
+
+.TP
+.B ./hsh
+Starts the shell in interactive mode (displays the prompt \fB$\fR and waits for user commands).
+
+.TP
+.B echo "ls" | ./hsh
+Runs the shell in non-interactive mode, reading commands from standard input.
+
+.TP
+.B /bin/ls
+Executes a command using its absolute path.
+
+.TP
+.B ls -l
+Executes a command with arguments.
+
+.SH EXIT STATUS
+The shell returns:
+.IP \[bu] 2
+0 on success
+.IP \[bu] 2
+127 if the command is not found
+.IP \[bu] 2
+The exit status of the executed command otherwise
+
+.SH AUTHORS
+Georgia Boulnois
+Fabien Cousin
