@@ -52,10 +52,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
----
-config:
-  theme: base
----
+```mermaid
 flowchart TD
     A[Start] --> B{"if (isatty(STDIN_FILENO))"}
 
@@ -108,6 +105,7 @@ flowchart TD
 * Create a child process using `fork`
 * Execute the command using `execve`
 * Wait for the child process to terminate
+```
 
 ---
 
