@@ -53,7 +53,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-<img src="assets/image/Flowchart_Shell.webp" alt="Flowchart Shell" width="600">
+![Flowchart Shell](assets/image/Flowchart_Shell.webp)
 **The shell follows this general execution flow:**
 
 * Display a prompt in interactive mode
