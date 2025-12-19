@@ -1,4 +1,4 @@
-# 🐚 Simple Shell (hsh)
+# 🐚 Simple Shell
 **Language:** C
 
 **Coding style:** Betty
