@@ -1,4 +1,3 @@
-
 # 🐚 Simple Shell (hsh)
 **Language:** C
 
@@ -54,6 +53,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 
 ## 🔁 Flowchart
 ![Flowchart Shell](image/Flowchart_Shell.webp)
+
 **The shell follows this general execution flow:**
 
 * Display a prompt in interactive mode
