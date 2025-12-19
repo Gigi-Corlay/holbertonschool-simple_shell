@@ -64,7 +64,7 @@ flowchart TD
     D --> E
 
     E --> F[Print prompt $]
-    F --> G[Read input]
+    F --> G[Read input with getline]
 
     G --> H{EOF or error}
     H -- Yes --> I[Exit shell]
