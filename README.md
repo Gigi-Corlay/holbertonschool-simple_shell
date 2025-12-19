@@ -60,7 +60,7 @@ flowchart TD
     B -- Yes --> C[Interactive mode]
     B -- No --> D[Non interactive mode]
 
-    C --> E[Main loop]
+    C --> E["while (1)"]
     D --> E
 
     E --> F[Print prompt]
