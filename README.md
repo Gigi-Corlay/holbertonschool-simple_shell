@@ -28,7 +28,7 @@
 ## 📌 Description
 **Simple Shell** is a minimalist UNIX command interpreter written in **C**. 
 It replicates the basic behavior of a standard shell (`/bin/sh`) for typical commands. 
-The shell reads user input, parses it into commands, searches for executables in the `PATH`, and runs them using system calls like `fork`, `execvev, and `wait`.
+The shell reads user input, parses it into commands, searches for executables in the `PATH`, and runs them using system calls like `fork`, `execvev`, and `wait`.
 Its behavior is designed to match standard shell behavior for common use cases
 
 ---
