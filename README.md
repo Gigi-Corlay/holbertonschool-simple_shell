@@ -26,14 +26,10 @@
 ---
 
 ## 📌 Description
-
-**Simple Shell** is a minimalist UNIX command interpreter written in **C**.
-It reproduces the basic behavior of a standard shell such as `/bin/sh` for common use cases.
-
-This project was developed as part of the **Holberton School** curriculum to gain a deeper understanding of how shells work internally, including process creation, command parsing, execution, and environment handling.
-
-The shell reads user input, parses commands, searches for executables in the `PATH`, and executes them using system calls such as `fork`, `execve`, and `wait`.
-For standard use cases, its behavior is intended to be consistent with `/bin/sh`.
+**Simple Shell** is a minimalist UNIX command interpreter written in **C**. 
+It replicates the basic behavior of a standard shell (`/bin/sh`) for typical commands. 
+The shell reads user input, parses it into commands, searches for executables in the `PATH`, and runs them using system calls like `fork`, `execvev, and `wait`.
+Its behavior is designed to match standard shell behavior for common use cases
 
 ---
 
@@ -52,7 +48,7 @@ For standard use cases, its behavior is intended to be consistent with `/bin/sh`
 ---
 
 ## 🔁 Flowchart
-> This flowchart illustrates the main process of the shell, from reading the command to parsing, executing built-ins, searching the PATH, and finally executing the program.
+> This flowchart illustrates the shell’s main process: reading the command, parsing it, executing built-ins, searching the PATH, and executing the command.
 ```mermaid
 flowchart TD
     A[Start] --> B{"isatty(STDIN_FILENO)"}
@@ -193,10 +189,10 @@ hsh main.c shell.c test_ls_2
 ---
 
 ## ✅ Checks
-- Work in groupe to create a **test suite**
+- Work in group to create a **test suite**
 - Cover both **standard cases** and **edge cases**
 - Validate all mandatory requirements
-- Matches the **project statement wording**
+- Follows the **project specification strictly**
 - Clear separation: compilation / interactive / non-interactive
 - Uses **exact examples** from the subject
 - Professional, readable, and checker-friendly
@@ -245,7 +241,7 @@ man ./man_1_simple_shell
 - No pipes (`|`)
 - No redirections (`>`, `<`)
 - No command chaining `;`, `&&`, `||`)
-- No quote handling
+- Commands with quotes are not supported
 
 ---
 
