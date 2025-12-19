@@ -63,7 +63,7 @@ flowchart TD
     C --> E["while (1)"]
     D --> E
 
-    E --> F[Print prompt]
+    E --> F[Print prompt  "$"]
     F --> G[Read input]
 
     G --> H{EOF or error}
