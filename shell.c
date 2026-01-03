@@ -28,7 +28,6 @@ int execute(char *command)
 {
 	pid_t pid;
 	int status;
-	extern char **environ;
 	char *argv[2];
 
 	pid = fork();

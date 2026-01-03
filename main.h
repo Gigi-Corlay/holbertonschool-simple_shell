@@ -7,6 +7,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+/* Declare the environment variable array */
+extern char **environ;
+
 /* Function prototypes */
 void print_prompt(void);
 ssize_t read_command(char **line, size_t *len);
