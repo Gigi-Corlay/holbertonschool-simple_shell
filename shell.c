@@ -47,7 +47,7 @@ int execute(char *command)
 	}
 	else
 	{
-		wait(&status);
+		waitpid(pid, &status, 0);
 	}
 	return (0);
 }
