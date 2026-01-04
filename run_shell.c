@@ -3,11 +3,11 @@
 #include <stdlib.h>
 
 /**
-* run_shell - Main loop of the shell
-* @argv0: name of the shell (for error messages)
-*
-* Return: nothing
-*/
+ * run_shell - Main loop of the shell
+ * @argv0: name of the shell (for error messages)
+ *
+ * Return: nothing
+ */
 void run_shell(char *argv0)
 {
 	char *line = NULL;
@@ -36,6 +36,7 @@ void run_shell(char *argv0)
 			exit(0);
 		}
 
+		/* Execute the command */
 		execute(argv0, cmd, line_number);
 	}
 

@@ -11,7 +11,6 @@ char *trim_and_get_command(char *line)
 
 	char *end;
 
-	/* Skip leading spaces and tabs */
 	while (*start == ' ' || *start == '\t')
 		start++;
 
