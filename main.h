@@ -13,7 +13,9 @@ extern char **environ;
 /* Function prototypes */
 void print_prompt(void);
 ssize_t read_command(char **line, size_t *len);
-int execute(char *command);
-void run_shell(void);
+
+/* Déclarations correctes pour Simple Shell 0.1 */
+int execute(char *argv0, char *command, int line_number);
+void run_shell(char *argv0);
 
 #endif /* MAIN_H */

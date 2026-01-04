@@ -26,7 +26,7 @@ ssize_t read_command(char **line, size_t *len)
 * @command: the command to execute
 * Return: 0 on success, 1 on failure
 */
-int execute(char *command)
+int execute(char *argv0, char *command, int line_number)
 {
 	pid_t pid;
 	int status;
@@ -43,8 +43,8 @@ int execute(char *command)
 		argv[1] = NULL;
 
 		execve(argv[0], argv, environ);
-		fprintf(stderr, "%s: command not found\n", command);
-		_exit(1);
+		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);
+		_exit(127);
 	}
 	else if (pid > 0)
 	{
@@ -61,13 +61,15 @@ int execute(char *command)
 /**
 * run_shell - Main loop of the shell
 */
-void run_shell(void)
+void run_shell(char *argv0)
 {
 	char *line = NULL;
 
 	size_t len = 0;
 	ssize_t nread;
 	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+
+	int line_number = 0;
 
 	while (1)
 	{
@@ -88,7 +90,8 @@ void run_shell(void)
 		if (line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 
-		execute(line);
+		line_number++;
+		execute(argv0, line, line_number);
 	}
 
 	free(line);

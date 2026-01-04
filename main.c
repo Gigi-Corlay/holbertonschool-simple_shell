@@ -1,11 +1,12 @@
 #include "main.h"
 
 /**
- * main - Entry point for the shell
- * Return: 0 on success
- */
-int main(void)
+* main - Entry point for the shell
+* Return: 0 on success
+*/
+int main(int argc, char **argv)
 {
-	run_shell();
+	(void)argc;
+	run_shell(argv[0]);
 	return (0);
 }
