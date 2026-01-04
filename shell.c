@@ -60,15 +60,18 @@ void run_shell(void)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
+	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 
 	while (1)
 	{
-		print_prompt();
+		if (interactive)
+			print_prompt();
 
 		nread = read_command(&line, &len);
 		if (nread == -1)
 		{
-			write(1, "\n", 1);
+			if (interactive)
+				write(1, "\n", 1);
 			break;
 		}
 
