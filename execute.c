@@ -8,7 +8,7 @@
 * @line_number: line number for error messages
 * Return: exit status of the command
 */
-int execute(char *argv0, char *command, int line_number)
+int execute_command(char *argv0, char *command, int line_number)
 {
 	pid_t pid;
 	int status;
@@ -34,7 +34,7 @@ int execute(char *argv0, char *command, int line_number)
 	if (pid == 0)
 	{
 		execve(command, argv, environ);
-		_exit(127); /* execve a échoué */
+		_exit(127);
 	}
 
 	waitpid(pid, &status, 0);

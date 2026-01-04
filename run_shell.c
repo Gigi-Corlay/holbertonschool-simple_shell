@@ -37,7 +37,7 @@ void run_shell(char *argv0)
 		if (strcmp(cmd, "exit") == 0)
 			break;
 
-		execute(argv0, cmd, line_number);
+		execute_command(argv0, cmd, line_number);
 	}
 
 	free(line);
