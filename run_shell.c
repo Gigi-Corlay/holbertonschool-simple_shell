@@ -14,9 +14,7 @@ void run_shell(char *argv0)
 
 	size_t len = 0;
 	char *cmd;
-
 	int line_number = 0;
-
 	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 
 	while (1)
@@ -35,10 +33,7 @@ void run_shell(char *argv0)
 			free(line);
 			exit(0);
 		}
-
-		/* Execute the command */
 		execute(argv0, cmd, line_number);
 	}
-
 	free(line);
 }
