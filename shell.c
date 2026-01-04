@@ -107,6 +107,13 @@ void run_shell(char *argv0)
             continue;
 
         line_number++;
+
+		if (strcmp(cmd, "exit") == 0)
+    	{
+        	free(line);
+        	exit(0);
+    	}
+
         execute(argv0, cmd, line_number);
 	}
 
