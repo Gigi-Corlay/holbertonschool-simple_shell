@@ -13,11 +13,11 @@ char *handle_input(char **line, size_t *len)
 	char *cmd;
 
 	nread = read_command(line, len);
-	if (nread == -1 || nread <= 1)
-		return (NULL);
+    if (nread == -1)
+        return (NULL);
 
-	if ((*line)[nread - 1] == '\n')
-		(*line)[nread - 1] = '\0';
+    if ((*line)[nread - 1] == '\n')
+        (*line)[nread - 1] = '\0';
 
 	cmd = trim_and_get_command(*line);
 	return (cmd);

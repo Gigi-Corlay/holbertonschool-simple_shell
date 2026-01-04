@@ -14,15 +14,18 @@ void run_shell(char *argv0)
 	size_t len = 0;
 	char *cmd;
 	int line_number = 0;
-
 	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 
 	while (1)
 	{
 		if (interactive)
-			print_prompt();
+		{
+            print_prompt();
+    		fflush(stdout);
+        }
 
 		cmd = handle_input(&line, &len);
+
 		if (!cmd)
 		{
 			if (feof(stdin))

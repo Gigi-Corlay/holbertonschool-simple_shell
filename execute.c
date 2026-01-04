@@ -23,7 +23,9 @@ int execute(char *argv0, char *command, int line_number)
 		argv[1] = NULL;
 
 		execve(argv[0], argv, environ);
+
 		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);
+		fflush(stderr);
 		_exit(127);
 	}
 	else if (pid > 0)
