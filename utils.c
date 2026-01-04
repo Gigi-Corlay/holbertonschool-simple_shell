@@ -10,14 +10,11 @@ char *trim_and_get_command(char *line)
 {
 	char *trimmed = line;
 
-	char *cmd;
-
 	while (*trimmed == ' ' || *trimmed == '\t')
 		trimmed++;
 
 	if (*trimmed == '\0')
 		return (NULL);
 
-	cmd = strtok(trimmed, " \t");
-	return (cmd);
+	return (trimmed);
 }
