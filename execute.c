@@ -1,45 +1,38 @@
 #include "main.h"
-#include <sys/wait.h>
-#include <unistd.h>
-#include <stdio.h>
 
 /**
-* execute - forks and executes a command
-* @argv0: shell name
-* @command: command to execute
-* @line_number: for errors
-*
-* Return: exit status
-*/
+ * execute - forks and executes a command
+ * @argv0: shell name
+ * @command: command to execute
+ * @line_number: command line number
+ * Return: 0
+ */
 int execute(char *argv0, char *command, int line_number)
 {
 	pid_t pid;
 	int status;
-
 	char *argv[2];
 
-	argv[0] = command;
-	argv[1] = NULL;
-
-	if (access(command, X_OK) == -1)
-	{
-		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);
-		return (127);
-	}
-
 	pid = fork();
-	if (pid == -1)
-		return (1);
-
 	if (pid == 0)
 	{
+		argv[0] = command;
+		argv[1] = NULL;
+
 		execve(command, argv, environ);
+
+		fprintf(stderr, "%s: %d: %s: not found\n",
+			argv0, line_number, command);
 		_exit(127);
 	}
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+	}
+	else
+	{
+		perror("fork");
+	}
 
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-
-	return (1);
+	return (0);
 }

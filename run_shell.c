@@ -1,48 +1,44 @@
 #include "main.h"
-#include <unistd.h>
-#include <stdlib.h>
 #include <string.h>
 
 /**
-* run_shell - Main loop of the simple shell
-* @argv0: Name of the shell program, used for error messages
-*
-* Description: This function reads commands from stdin, displays a
-* prompt in interactive mode, handles EOF (Ctrl+D), handles the
-* "exit" command, and executes simple commands using execve.
-*/
+ * run_shell - main shell loop
+ * @argv0: shell name
+ */
 void run_shell(char *argv0)
 {
 	char *line = NULL;
-
 	size_t len = 0;
-	char *cmd;
-
-	int line_number = 0;
-
+	ssize_t nread;
 	int interactive = isatty(STDIN_FILENO);
+	int line_number = 0;
+	char *cmd;
 
 	while (1)
 	{
 		if (interactive)
 			print_prompt();
 
-		cmd = handle_input(&line, &len);
-
-		if (!cmd && feof(stdin)) /* EOF Ctrl+D */
+		nread = read_command(&line, &len);
+		if (nread == -1)
 		{
-			write(STDOUT_FILENO, "\n", 1);
+			if (interactive)
+				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
 
-		if (!cmd) /* empty line */
+		if (nread <= 1)
 			continue;
 
-		if (strcmp(cmd, "exit") == 0) /* handle exit built-in */
-		{
-			free(line);
+		if (line[nread - 1] == '\n')
+			line[nread - 1] = '\0';
+
+		cmd = trim_and_get_command(line);
+		if (!cmd)
+			continue;
+
+		if (strcmp(cmd, "exit") == 0)
 			break;
-		}
 
 		line_number++;
 		execute(argv0, cmd, line_number);
