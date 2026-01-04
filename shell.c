@@ -67,7 +67,10 @@ void run_shell(void)
 
 		nread = read_command(&line, &len);
 		if (nread == -1)
+		{
+			write(1, "\n", 1);
 			break;
+		}
 
 		if (nread <= 1)
 			continue;
