@@ -11,12 +11,9 @@
 void run_shell(char *argv0)
 {
 	char *line = NULL;
-
 	size_t len = 0;
 	char *cmd;
-
 	int line_number = 0;
-
 	int interactive = isatty(STDIN_FILENO);
 
 	while (1)

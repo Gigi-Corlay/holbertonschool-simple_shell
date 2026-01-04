@@ -9,7 +9,7 @@
 void sigint_handler(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "($) ", 4);
+	write(STDOUT_FILENO, "\n($) ", 5);
 }
 /**
 * main - entry point
