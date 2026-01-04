@@ -1,14 +1,12 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/wait.h>
 
 /**
  * execute - forks a child and executes a command
- * @argv0: name of the shell (for errors)
+ * @argv0: name of the shell
  * @command: command to execute
- * @line_number: line number for errors
- * Return: 0 on success, 1 on failure
+ * @line_number: line number for error messages
+ * Return: exit status of the command
  */
 int execute(char *argv0, char *command, int line_number)
 {
@@ -19,6 +17,13 @@ int execute(char *argv0, char *command, int line_number)
 	argv[0] = command;
 	argv[1] = NULL;
 
+	/* check if command exists and is executable */
+	if (access(command, X_OK) == -1)
+	{
+		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);
+		return (127);
+	}
+
 	pid = fork();
 	if (pid == -1)
 		return (1);
@@ -26,12 +31,13 @@ int execute(char *argv0, char *command, int line_number)
 	if (pid == 0)
 	{
 		execve(command, argv, environ);
-		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, command);
 		_exit(127);
 	}
-	else
-		waitpid(pid, &status, 0);
 
-	return (0);
+	waitpid(pid, &status, 0);
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+
+	return (1);
 }
