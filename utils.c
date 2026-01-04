@@ -8,7 +8,6 @@
 char *trim_and_get_command(char *line)
 {
 	char *start = line;
-
 	char *end;
 
 	while (*start == ' ' || *start == '\t')
