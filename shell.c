@@ -17,5 +17,11 @@ void print_prompt(void)
 */
 ssize_t read_command(char **line, size_t *len)
 {
-	return (getline(line, len, stdin));
+	ssize_t nread;
+
+	nread = getline(line, len, stdin);
+	if (nread == -1)
+		return (-1);
+
+	return (nread);
 }

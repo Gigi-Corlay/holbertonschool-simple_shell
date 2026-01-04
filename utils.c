@@ -1,10 +1,10 @@
 #include "main.h"
 
 /**
-* trim_and_get_command - Trim leading spaces and return the first word
-* @line: input line
-* Return: pointer to the first command or NULL if line is empty
-*/
+ * trim_and_get_command - trims leading spaces, returns first word
+ * @line: input line
+ * Return: pointer to first word or NULL
+ */
 char *trim_and_get_command(char *line)
 {
 	char *start = line;
@@ -20,7 +20,6 @@ char *trim_and_get_command(char *line)
 	while (*end != '\0' && *end != ' ' && *end != '\t')
 		end++;
 
-	/* Null-terminate the first word */
 	if (*end != '\0')
 		*end = '\0';
 

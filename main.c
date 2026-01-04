@@ -1,11 +1,11 @@
 #include "main.h"
 
 /**
-* main - Entry point for the shell
-* @argc: number of arguments (unused)
-* @argv: array of arguments
-* Return: 0 on success
-*/
+ * main - entry point
+ * @argc: number of arguments (unused)
+ * @argv: array of arguments
+ * Return: 0
+ */
 int main(int argc, char **argv)
 {
 	(void)argc;

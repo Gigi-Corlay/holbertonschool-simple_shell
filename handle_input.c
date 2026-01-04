@@ -1,12 +1,11 @@
 #include "main.h"
 
 /**
-* handle_input - Reads a line and returns the first command
-* @line: pointer to the input buffer
-* @len: pointer to the buffer size
-*
-* Return: first command or NULL if empty
-*/
+ * handle_input - reads a line and returns the first command
+ * @line: pointer to input buffer
+ * @len: pointer to buffer size
+ * Return: first command or NULL if empty
+ */
 char *handle_input(char **line, size_t *len)
 {
 	ssize_t nread;
@@ -20,5 +19,6 @@ char *handle_input(char **line, size_t *len)
 		(*line)[nread - 1] = '\0';
 
 	cmd = trim_and_get_command(*line);
+
 	return (cmd);
 }

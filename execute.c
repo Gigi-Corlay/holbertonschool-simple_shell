@@ -1,10 +1,13 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 
 /**
- * execute - Forks a child process and executes a command
- * @argv0: name of the shell (for error messages)
+ * execute - forks a child and executes a command
+ * @argv0: name of the shell (for errors)
  * @command: command to execute
- * @line_number: line number of the command (for errors)
+ * @line_number: line number for errors
  * Return: 0 on success, 1 on failure
  */
 int execute(char *argv0, char *command, int line_number)
@@ -17,7 +20,12 @@ int execute(char *argv0, char *command, int line_number)
 		return (1);
 
 	pid = fork();
-	if (pid == 0)
+	if (pid == -1)
+	{
+		perror("fork");
+		return (1);
+	}
+	else if (pid == 0)
 	{
 		argv[0] = command;
 		argv[1] = NULL;
@@ -28,12 +36,9 @@ int execute(char *argv0, char *command, int line_number)
 		fflush(stderr);
 		_exit(127);
 	}
-	else if (pid > 0)
-		waitpid(pid, &status, 0);
 	else
 	{
-		perror("fork");
-		return (1);
+		waitpid(pid, &status, 0);
 	}
 
 	return (0);
