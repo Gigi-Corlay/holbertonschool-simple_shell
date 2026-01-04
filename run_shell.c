@@ -4,7 +4,7 @@
 
 /**
 * run_shell - Main loop of the shell
-* @argv0: name of the shell (for error messages)
+*@argv0: name of the shell
 *
 * Return: nothing
 */
@@ -14,32 +14,28 @@ void run_shell(char *argv0)
 	size_t len = 0;
 	char *cmd;
 	int line_number = 0;
-	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+	int interactive = isatty(STDIN_FILENO);
 
 	while (1)
 	{
 		if (interactive)
-		{
 			print_prompt();
-			fflush(stdout);
-		}
 
 		cmd = handle_input(&line, &len);
-		if (!cmd)
+
+		if (!cmd && feof(stdin))
 		{
-			if (feof(stdin))
-			{
-				printf("\n");
-				break;
-			}
-			continue;
+			write(STDOUT_FILENO, "\n", 1);
+			break;
 		}
+
 		line_number++;
 
-		if (strcmp(cmd, "exit") == 0)
-			break;
+		if (!cmd)
+			continue;
 
 		execute(argv0, cmd, line_number);
 	}
+
 	free(line);
 }

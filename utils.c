@@ -20,7 +20,6 @@ char *trim_and_get_command(char *line)
 	while (*end != '\0' && *end != ' ' && *end != '\t')
 		end++;
 
-	if (*end != '\0')
 		*end = '\0';
 
 	return (start);

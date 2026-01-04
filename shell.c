@@ -6,22 +6,38 @@
 */
 void print_prompt(void)
 {
-	write(1, "$ ", 2);
+	write(STDOUT_FILENO, "$ ", 2);
 }
 
 /**
-* read_command - Reads a line from standard input
-* @line: pointer to the buffer to store input
-* @len: pointer to the size of the buffer
-* Return: number of characters read, -1 on EOF
+* read_command - reads input from stdin
+* @line: buffer
+* @len: buffer size
+* Return: number of characters read or -1
 */
 ssize_t read_command(char **line, size_t *len)
 {
+	return (getline(line, len, stdin));
+}
+
+/**
+ * handle_input - reads and cleans input
+ * @line: input buffer
+ * @len: buffer length
+ * Return: command or NULL
+ */
+char *handle_input(char **line, size_t *len)
+{
 	ssize_t nread;
+	char *cmd;
 
-	nread = getline(line, len, stdin);
+	nread = read_command(line, len);
 	if (nread == -1)
-		return (-1);
+		return (NULL);
 
-	return (nread);
+	if (nread > 0 && (*line)[nread - 1] == '\n')
+		(*line)[nread - 1] = '\0';
+
+	cmd = trim_and_get_command(*line);
+	return (cmd);
 }

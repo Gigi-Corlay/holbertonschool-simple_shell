@@ -13,33 +13,25 @@
 int execute(char *argv0, char *command, int line_number)
 {
 	pid_t pid;
-	int status;
 	char *argv[2];
+	int status;
 
-	if (!command || command[0] == '\0')
-		return (1);
+	argv[0] = command;
+	argv[1] = NULL;
 
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork");
 		return (1);
-	}
-	else if (pid == 0)
+
+	if (pid == 0)
 	{
-		argv[0] = command;
-		argv[1] = NULL;
-
-		execve(argv[0], argv, environ);
-
-		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);
-		fflush(stderr);
+		execve(command, argv, environ);
+		fprintf(stderr, "%s: %d: %s: not found\n",
+			argv0, line_number, command);
 		_exit(127);
 	}
 	else
-	{
 		waitpid(pid, &status, 0);
-	}
 
 	return (0);
 }
