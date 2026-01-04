@@ -21,13 +21,13 @@ void run_shell(char *argv0)
 			print_prompt();
 
 		nread = read_command(&line, &len);
-		if (nread == -1)
+		if (nread == -1) /* Ctrl+D */
 		{
 			if (interactive)
 				write(1, "\n", 1);
 			break;
 		}
-		if (nread <= 1)
+		if (nread <= 1) /* Empty line */
 			continue;
 
 		if (line[nread - 1] == '\n')
@@ -44,7 +44,11 @@ void run_shell(char *argv0)
 			free(line);
 			exit(0);
 		}
-		execute(argv0, cmd, line_number);
+
+		/* Execute only the first word */
+		if (execute(argv0, cmd, line_number) != 0)
+			fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
 	}
+
 	free(line);
 }

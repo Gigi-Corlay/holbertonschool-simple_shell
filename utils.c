@@ -1,5 +1,4 @@
 #include "main.h"
-#include <string.h>
 
 /**
 * trim_and_get_command - Trim leading spaces and return the first word
@@ -8,26 +7,24 @@
 */
 char *trim_and_get_command(char *line)
 {
-	char *trimmed = line;
+	char *start = line;
 
-	char *cmd;
+	char *end;
 
 	/* Skip leading spaces and tabs */
-	while (*trimmed == ' ' || *trimmed == '\t')
-		trimmed++;
+	while (*start == ' ' || *start == '\t')
+		start++;
 
-	/* Return NULL if line is empty */
-	if (*trimmed == '\0')
+	if (*start == '\0')
 		return (NULL);
 
-	/* Find the first word */
-	cmd = trimmed;
-	while (*trimmed != '\0' && *trimmed != ' ' && *trimmed != '\t')
-		trimmed++;
+	end = start;
+	while (*end != '\0' && *end != ' ' && *end != '\t')
+		end++;
 
-	/* Terminate the first word */
-	if (*trimmed != '\0')
-		*trimmed = '\0';
+	/* Null-terminate the first word */
+	if (*end != '\0')
+		*end = '\0';
 
-	return (cmd);
+	return (start);
 }
