@@ -1,34 +1,39 @@
 #include "main.h"
 
+extern char **environ;
+
 /**
- * print_prompt - Displays the shell prompt
- */
+* print_prompt - Displays the shell prompt
+*/
 void print_prompt(void)
 {
 	write(1, "$ ", 2);
 }
 
 /**
- * read_command - Reads a line from standard input
- * @line: pointer to the buffer to store input
- * @len: pointer to the size of the buffer
- * Return: number of characters read, -1 on EOF
- */
+* read_command - Reads a line from standard input
+* @line: pointer to the buffer to store input
+* @len: pointer to the size of the buffer
+* Return: number of characters read, -1 on EOF
+*/
 ssize_t read_command(char **line, size_t *len)
 {
 	return (getline(line, len, stdin));
 }
 
 /**
- * execute - Forks a child process and executes a command
- * @command: the command to execute
- * Return: 0 on success, 1 on failure
- */
+* execute - Forks a child process and executes a command
+* @command: the command to execute
+* Return: 0 on success, 1 on failure
+*/
 int execute(char *command)
 {
 	pid_t pid;
 	int status;
 	char *argv[2];
+
+	if (!command || command[0] == '\0')
+		return (1);
 
 	pid = fork();
 	if (pid == -1)
@@ -53,8 +58,8 @@ int execute(char *command)
 }
 
 /**
- * run_shell - Main loop of the shell
- */
+* run_shell - Main loop of the shell
+*/
 void run_shell(void)
 {
 	char *line = NULL;
