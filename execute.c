@@ -16,7 +16,7 @@ int execute(char *argv0, char *command, int line_number)
 
 	argv[0] = command;
 	argv[1] = NULL;
-	
+
 	if (access(command, X_OK) == -1)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, command);

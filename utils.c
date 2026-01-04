@@ -19,7 +19,7 @@ void print_prompt(void)
 */
 ssize_t read_command(char **line, size_t *len)
 {
-	return getline(line, len, stdin);
+	return (getline(line, len, stdin));
 }
 
 /**
