@@ -1,23 +1,18 @@
 #include "main.h"
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 /**
 * run_shell - Main loop of the shell
-* @argv0: name of the shell (used in error messages)
-*
-* Return: nothing
+* @argv0: name of the shell
 */
 void run_shell(char *argv0)
 {
 	char *line = NULL;
-
 	size_t len = 0;
 	char *cmd;
-
 	int line_number = 0;
-
 	int interactive = isatty(STDIN_FILENO);
 
 	while (1)
@@ -29,7 +24,8 @@ void run_shell(char *argv0)
 
 		if (!cmd && feof(stdin))
 		{
-			write(STDOUT_FILENO, "\n", 1);
+			if (interactive)
+				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
 
