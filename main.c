@@ -3,21 +3,21 @@
 #include <unistd.h>
 
 /**
-* sigint_handler - handles Ctrl+C (SIGINT) and prints a new prompt
-* @sig: signal number (ignored)
+* sigint_handler - handle Ctrl+C
+* @sig: signal number
 */
 void sigint_handler(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\n($) ", 4);
+	write(STDOUT_FILENO, "\n($) ", 5);
 }
 
 /**
-* main - entry point for the shell
-* @argc: number of arguments (unused)
-* @argv: array of arguments (argv[0] is the shell name)
+* main - entry point
+* @argc: unused
+* @argv: program name
 *
-* Return: 0 on success
+* Return: 0
 */
 int main(int argc, char **argv)
 {

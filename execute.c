@@ -1,14 +1,17 @@
 #include "main.h"
 #include <sys/wait.h>
+#include <unistd.h>
+#include <stdio.h>
 
 /**
-* execute - forks a child and executes a command
-* @argv0: name of the shell
+* execute - forks and executes a command
+* @argv0: shell name
 * @command: command to execute
-* @line_number: line number for error messages
-* Return: exit status of the command
+* @line_number: for errors
+*
+* Return: exit status
 */
-int execute_command(char *argv0, char *command, int line_number)
+int execute(char *argv0, char *command, int line_number)
 {
 	pid_t pid;
 	int status;
@@ -26,10 +29,7 @@ int execute_command(char *argv0, char *command, int line_number)
 
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork");
 		return (1);
-	}
 
 	if (pid == 0)
 	{
@@ -40,5 +40,6 @@ int execute_command(char *argv0, char *command, int line_number)
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+
 	return (1);
 }

@@ -8,15 +8,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* Declare the environment variable array */
 extern char **environ;
 
-/* Shell functions */
 void print_prompt(void);
 ssize_t read_command(char **line, size_t *len);
-int execute_command(char *argv0, char *command, int line_number);
-void run_shell(char *argv0);
-char *trim_and_get_command(char *line);
 char *handle_input(char **line, size_t *len);
+char *trim_and_get_command(char *line);
+void run_shell(char *argv0);
+int execute(char *argv0, char *command, int line_number);
 
-#endif /* MAIN_H */
+#endif
