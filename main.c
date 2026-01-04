@@ -3,20 +3,20 @@
 #include <unistd.h>
 
 /**
- * sigint_handler - handles Ctrl+C (SIGINT)
- * @sig: signal number (unused)
- */
+* sigint_handler - handles Ctrl+C (SIGINT)
+* @sig: signal number (unused)
+*/
 void sigint_handler(int sig)
 {
-    (void)sig;
-    write(STDOUT_FILENO, "\n$ ", 3);
+	(void)sig;
+	write(STDOUT_FILENO, "($) ", 4);
 }
 /**
- * main - entry point
- * @argc: number of arguments (unused)
- * @argv: array of arguments
- * Return: 0
- */
+* main - entry point
+* @argc: number of arguments (unused)
+* @argv: array of arguments
+* Return: 0
+*/
 int main(int argc, char **argv)
 {
 	(void)argc;

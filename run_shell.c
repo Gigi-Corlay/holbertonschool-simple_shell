@@ -11,9 +11,12 @@
 void run_shell(char *argv0)
 {
 	char *line = NULL;
+
 	size_t len = 0;
 	char *cmd;
+
 	int line_number = 0;
+
 	int interactive = isatty(STDIN_FILENO);
 
 	while (1)
@@ -22,18 +25,10 @@ void run_shell(char *argv0)
 			print_prompt();
 
 		cmd = handle_input(&line, &len);
-
-		if (!cmd && feof(stdin))
-		{
-			write(STDOUT_FILENO, "\n", 1);
+		if (!cmd) /* EOF or empty line */
 			break;
-		}
 
 		line_number++;
-
-		if (!cmd)
-			continue;
-
 		execute(argv0, cmd, line_number);
 	}
 
