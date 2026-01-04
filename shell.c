@@ -30,18 +30,14 @@ int execute(char *command)
 {
 	pid_t pid;
 	int status;
+
 	char *argv[2];
 
 	if (!command || command[0] == '\0')
 		return (1);
 
 	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork failed");
-		return (1);
-	}
-	else if (pid == 0)
+	if (pid == 0)
 	{
 		argv[0] = command;
 		argv[1] = NULL;
@@ -50,9 +46,14 @@ int execute(char *command)
 		fprintf(stderr, "%s: command not found\n", command);
 		_exit(1);
 	}
-	else
+	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
+	}
+	else
+	{
+		perror("fork");
+		return (1);
 	}
 	return (0);
 }
@@ -63,6 +64,7 @@ int execute(char *command)
 void run_shell(void)
 {
 	char *line = NULL;
+
 	size_t len = 0;
 	ssize_t nread;
 	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
