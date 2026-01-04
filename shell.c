@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string.h>
 
 extern char **environ;
 
@@ -64,12 +65,15 @@ int execute(char *argv0, char *command, int line_number)
 void run_shell(char *argv0)
 {
 	char *line = NULL;
-
 	size_t len = 0;
 	ssize_t nread;
-	int interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+    int interactive;
+    int line_number;
+    char *trimmed;
+    char *cmd;
 
-	int line_number = 0;
+	interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+    line_number = 0;
 
 	while (1)
 	{
@@ -90,8 +94,20 @@ void run_shell(char *argv0)
 		if (line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 
-		line_number++;
-		execute(argv0, line, line_number);
+		trimmed = line;
+
+        while (*trimmed == ' ' || *trimmed == '\t')
+            trimmed++;
+
+        if (*trimmed == '\0')
+            continue;
+
+        cmd = strtok(trimmed, " \t");
+        if (!cmd)
+            continue;
+
+        line_number++;
+        execute(argv0, cmd, line_number);
 	}
 
 	free(line);
