@@ -12,9 +12,9 @@ void sigint_handler(int sig)
 }
 
 /**
- * main - entry point
- * @argc: argument count
- * @argv: argument vector
+ * main - entry point of the shell
+ * @argc: number of arguments (unused)
+ * @argv: array of arguments
  * Return: 0
  */
 int main(int argc, char **argv)

@@ -2,19 +2,24 @@
 #include <string.h>
 
 /**
- * trim_and_get_command - returns first word of input
+ * trim_and_get_command - trims leading spaces and returns first word
  * @line: input line
- * Return: command or NULL
+ * Return: pointer to first command or NULL if empty
  */
 char *trim_and_get_command(char *line)
 {
-	char *start = line;
+	char *trimmed;
 
-	while (*start == ' ' || *start == '\t')
-		start++;
-
-	if (*start == '\0')
+	if (!line)
 		return (NULL);
 
-	return (strtok(start, " \t"));
+	trimmed = line;
+
+	while (*trimmed == ' ' || *trimmed == '\t')
+		trimmed++;
+
+	if (*trimmed == '\0')
+		return (NULL);
+
+	return (strtok(trimmed, " \t"));
 }

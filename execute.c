@@ -1,11 +1,12 @@
 #include "main.h"
 
 /**
- * execute - forks and executes a command
- * @argv0: shell name
+ * execute - forks a child process and executes a command.
+ * @argv0: name of the shell for error messages
  * @command: command to execute
- * @line_number: command line number
- * Return: 0
+ * @line_number: line number of the command
+ *
+ * Return: 0 on success, or 1 on failure.
  */
 int execute(char *argv0, char *command, int line_number)
 {
@@ -13,14 +14,15 @@ int execute(char *argv0, char *command, int line_number)
 	int status;
 	char *argv[2];
 
+	if (!command || command[0] == '\0')
+		return (1);
+
 	pid = fork();
 	if (pid == 0)
 	{
 		argv[0] = command;
 		argv[1] = NULL;
-
-		execve(command, argv, environ);
-
+		execve(argv[0], argv, environ);
 		fprintf(stderr, "%s: %d: %s: not found\n",
 			argv0, line_number, command);
 		_exit(127);
@@ -32,6 +34,7 @@ int execute(char *argv0, char *command, int line_number)
 	else
 	{
 		perror("fork");
+		return (1);
 	}
 
 	return (0);

@@ -2,8 +2,8 @@
 #include <string.h>
 
 /**
- * run_shell - main shell loop
- * @argv0: shell name
+ * run_shell - main loop of the shell
+ * @argv0: name of the shell (used for errors)
  */
 void run_shell(char *argv0)
 {
