@@ -1,33 +1,32 @@
 #include "main.h"
-#include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 /**
-* print_prompt - displays the shell prompt
-*/
+ * print_prompt - displays the shell prompt
+ */
 void print_prompt(void)
 {
-	write(STDOUT_FILENO, "($) ", 4);
+	write(STDOUT_FILENO, "$ ", 2);
 }
 
 /**
-* read_command - reads a line from stdin
-* @line: buffer
-* @len: buffer size
-* Return: number of characters read or -1
-*/
+ * read_command - reads a line from stdin
+ * @line: buffer
+ * @len: buffer size
+ * Return: number of characters read or -1
+ */
 ssize_t read_command(char **line, size_t *len)
 {
 	return (getline(line, len, stdin));
 }
 
 /**
-* handle_input - reads and cleans input
-* @line: input buffer
-* @len: buffer length
-* Return: first command or NULL if empty/EOF
-*/
+ * handle_input - reads and cleans input
+ * @line: input buffer
+ * @len: buffer length
+ * Return: first command or NULL if empty/EOF
+ */
 char *handle_input(char **line, size_t *len)
 {
 	ssize_t nread;
@@ -45,14 +44,13 @@ char *handle_input(char **line, size_t *len)
 }
 
 /**
-* trim_and_get_command - trims leading spaces, returns first word
-* @line: input line
-* Return: pointer to first word or NULL
-*/
+ * trim_and_get_command - trims leading spaces, returns first word
+ * @line: input line
+ * Return: pointer to first word or NULL
+ */
 char *trim_and_get_command(char *line)
 {
 	char *start = line;
-
 	char *end;
 
 	while (*start == ' ' || *start == '\t')
