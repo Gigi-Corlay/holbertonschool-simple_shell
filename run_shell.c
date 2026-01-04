@@ -25,8 +25,13 @@ void run_shell(char *argv0)
 			print_prompt();
 
 		cmd = handle_input(&line, &len);
-		if (!cmd) /* EOF or empty line */
+		if (!cmd && feof(stdin))
+		{
+			write(STDOUT_FILENO, "\n", 1);
 			break;
+		}
+		if (!cmd)
+			continue;
 
 		line_number++;
 		execute(argv0, cmd, line_number);
