@@ -19,5 +19,6 @@ char *trim_and_get_command(char *line);
 void run_shell(char *argv0);
 
 int execute(char *argv0, char *command, int line_number);
+char *find_command_in_path(char *cmd);
 
 #endif
