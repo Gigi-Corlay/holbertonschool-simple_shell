@@ -1,4 +1,22 @@
 #include "main.h"
+#include <string.h>
+
+/**
+* get_path_from_environ - returns the value of PATH from environ
+* Return: pointer to PATH string, or NULL if not found
+*/
+char *get_path_from_environ(void)
+{
+	int i = 0;
+
+	while (environ[i])
+	{
+		if(strncmp(environ[i], "PATH=", 5) == 0)
+			return (environ[i] + 5);
+		i++;
+	}
+	return NULL;
+}
 
 /**
 * find_command_in_path - searches for a command in PATH
@@ -14,7 +32,7 @@ char *find_command_in_path(char *cmd)
 	if(!cmd)
 		return NULL;
 
-	path = getenv("PATH");
+	path = get_path_from_environ();
 	if (!path)
 		return NULL;
 
@@ -37,7 +55,7 @@ char *find_command_in_path(char *cmd)
 		strcat(full_path, "/");
 		strcat(full_path, cmd);
 
-		if (access(full_path, X_OK) == 0);
+		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
 			return (full_path);
@@ -63,14 +81,27 @@ int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;
 	int status;
+	char *cmd_path;
 
-	if (!argv || !argv[0])
+	if (!argv || !argv[0] || argv[0][0] == '\0')
 		return (1);
+
+	if(strchr(argv[0], '/'))
+		cmd_path = argv[0];
+	else
+		cmd_path = find_command_in_path(argv[0]);
+
+	if(!cmd_path)
+	{
+		fprintf(stderr, "%s: %d: %s: not found\n",
+			argv0, line_number, argv[0]);
+		return (1);
+	}
 
 	pid = fork();
 	if (pid == 0)
 	{
-		execve(argv[0], argv, environ);
+		execve(cmd_path, argv, environ);
 		fprintf(stderr, "%s: %d: %s: not found\n",
 			argv0, line_number, argv[0]);
 		_exit(127);
@@ -78,9 +109,15 @@ int execute(char *argv0, char **argv, int line_number)
 	else if (pid < 0)
 	{
 		perror("fork");
+		if (cmd_path != argv[0])
+			free(cmd_path);
 		return (1);
 	}
 
 	waitpid(pid, &status, 0);
+
+	if(cmd_path != argv[0])
+		free(cmd_path);
+
 	return (0);
 }
