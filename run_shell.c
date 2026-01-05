@@ -45,6 +45,7 @@ void process_line(char *line, char *argv0, int *line_number)
 
 	(*line_number)++;
 	execute(argv0, args, *line_number);
+
 	free(args);
 }
 
@@ -66,42 +67,24 @@ void handle_stdin(char *argv0, int *line_number)
 			print_prompt();
 
 		line = read_line(&len);
-		if (!line) /* EOF */
+		if (!line)
 		{
 			if (interactive)
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
-
-<<<<<<< HEAD
-		line_number++;
-
-		if (nread <= 1)
+		if (line[0] == '\0')
+		{
+			free(line);
 			continue;
-
-		if (line[nread - 1] == '\n')
-			line[nread - 1] = '\0';
-
-		cmd = trim_and_get_command(line);
-		if (!cmd)
-			continue;
-
-		if (strcmp(cmd, "exit") == 0)
-=======
+		}
 		if (strcmp(line, "exit") == 0)
 		{
 			free(line);
->>>>>>> 071a046 (Add support for command arguments in simple_shell)
 			break;
 		}
-
-<<<<<<< HEAD
-
-		execute(argv0, cmd, line_number);
-=======
 		process_line(line, argv0, line_number);
 		free(line);
->>>>>>> 071a046 (Add support for command arguments in simple_shell)
 	}
 }
 

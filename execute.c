@@ -1,13 +1,13 @@
 #include "main.h"
 
 /**
- * execute - forks a child process and executes a command with arguments
- * @argv0: name of the shell (for error messages)
- * @argv: array of arguments (command + args)
- * @line_number: command count
- *
- * Return: 0 on success, 1 on failure
- */
+* execute - forks a child process and executes a command with arguments
+* @argv0: name of the shell (for error messages)
+* @argv: array of arguments (command + args)
+* @line_number: command count
+*
+* Return: 0 on success, 1 on failure
+*/
 int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;
@@ -20,8 +20,7 @@ int execute(char *argv0, char **argv, int line_number)
 	if (pid == 0)
 	{
 		execve(argv[0], argv, environ);
-		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, argv[0]);
+		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, argv[0]);
 		_exit(127);
 	}
 	else if (pid < 0)
