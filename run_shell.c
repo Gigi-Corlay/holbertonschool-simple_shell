@@ -1,32 +1,79 @@
 #include "main.h"
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
- * run_shell - main loop of the shell
- * @argv0: name of the shell (used for errors)
- */
-void run_shell(char *argv0)
+* read_line - reads one line from stdin
+* @len: pointer to buffer size (updated by getline)
+* Return: pointer to line (must be freed) or NULL on EOF
+*/
+char *read_line(size_t *len)
 {
 	char *line = NULL;
-	size_t len = 0;
+
 	ssize_t nread;
+
+	nread = getline(&line, len, stdin);
+	if (nread == -1)
+	{
+		free(line);
+		return (NULL);
+	}
+
+	if (nread > 0 && line[nread - 1] == '\n')
+		line[nread - 1] = '\0';
+
+	return (line);
+}
+
+/**
+* process_line - parses a line into arguments and executes it
+* @line: input line
+* @argv0: shell name (for errors)
+* @line_number: pointer to current line number
+*/
+void process_line(char *line, char *argv0, int *line_number)
+{
+	char **args = parse_args(line);
+
+	if (!args || !args[0])
+	{
+		free(args);
+		return;
+	}
+
+	(*line_number)++;
+	execute(argv0, args, *line_number);
+	free(args);
+}
+
+/**
+* handle_stdin - main loop reading stdin and executing commands
+* @argv0: shell name (for errors)
+* @line_number: pointer to line counter
+*/
+void handle_stdin(char *argv0, int *line_number)
+{
 	int interactive = isatty(STDIN_FILENO);
-	int line_number = 0;
-	char *cmd;
+
+	size_t len = 0;
+	char *line;
 
 	while (1)
 	{
 		if (interactive)
 			print_prompt();
 
-		nread = read_command(&line, &len);
-		if (nread == -1)
+		line = read_line(&len);
+		if (!line) /* EOF */
 		{
 			if (interactive)
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
 
+<<<<<<< HEAD
 		line_number++;
 
 		if (nread <= 1)
@@ -40,11 +87,31 @@ void run_shell(char *argv0)
 			continue;
 
 		if (strcmp(cmd, "exit") == 0)
+=======
+		if (strcmp(line, "exit") == 0)
+		{
+			free(line);
+>>>>>>> 071a046 (Add support for command arguments in simple_shell)
 			break;
+		}
 
+<<<<<<< HEAD
 
 		execute(argv0, cmd, line_number);
+=======
+		process_line(line, argv0, line_number);
+		free(line);
+>>>>>>> 071a046 (Add support for command arguments in simple_shell)
 	}
+}
 
-	free(line);
+/**
+* run_shell - entry point for shell main loop
+* @argv0: shell name (for errors)
+*/
+void run_shell(char *argv0)
+{
+	int line_number = 0;
+
+	handle_stdin(argv0, &line_number);
 }
