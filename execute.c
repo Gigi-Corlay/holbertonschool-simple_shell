@@ -70,13 +70,13 @@ char *find_command_in_path(char *cmd)
 }
 
 /**
- * execute - forks a child process and executes a command.
- * @argv0: name of the shell for error messages
- * @command: command to execute
- * @line_number: line number of the command
- *
- * Return: 0 on success, 1 on failure
- */
+* execute - forks a child process and executes a command with arguments
+* @argv0: name of the shell (for error messages)
+* @argv: array of arguments (command + args)
+* @line_number: command count
+*
+* Return: 0 on success, 1 on failure
+*/
 int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;

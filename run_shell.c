@@ -48,6 +48,7 @@ void process_line(char *line, char *argv0, int *line_number)
 
 	(*line_number)++;
 	execute(argv0, args, *line_number);
+
 	free(args);
 }
 
@@ -68,7 +69,7 @@ void handle_stdin(char *argv0, int *line_number)
 			print_prompt();
 
 		line = read_line(&len);
-		if (!line) /* EOF */
+		if (!line)
 		{
 			if (interactive)
 				write(STDOUT_FILENO, "\n", 1);
