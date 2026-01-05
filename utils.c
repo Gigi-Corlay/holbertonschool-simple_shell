@@ -21,5 +21,5 @@ char *trim_and_get_command(char *line)
 	if (*trimmed == '\0')
 		return (NULL);
 
-	return (trimmed);
+	return (strtok(trimmed, " \t"));
 }
