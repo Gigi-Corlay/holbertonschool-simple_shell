@@ -22,5 +22,7 @@ void handle_stdin(char *argv0, int *line_number);
 void run_shell(char *argv0);
 void sigint_handler(int sig);
 int main(int argc, char **argv);
+char *find_command_in_path(char *cmd);
+char *get_path_from_environ(void);
 
 #endif

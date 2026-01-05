@@ -4,14 +4,13 @@
 #include <unistd.h>
 
 /**
-* read_line - reads one line from stdin
-* @len: pointer to buffer size (updated by getline)
-* Return: pointer to line (must be freed) or NULL on EOF
-*/
+ * read_line - reads one line from stdin
+ * @len: pointer to buffer size (updated by getline)
+ * Return: pointer to line (must be freed) or NULL on EOF
+ */
 char *read_line(size_t *len)
 {
 	char *line = NULL;
-
 	ssize_t nread;
 
 	nread = getline(&line, len, stdin);
@@ -28,15 +27,19 @@ char *read_line(size_t *len)
 }
 
 /**
-* process_line - parses a line into arguments and executes it
-* @line: input line
-* @argv0: shell name (for errors)
-* @line_number: pointer to current line number
-*/
+ * process_line - parses a line into arguments and executes it
+ * @line: input line
+ * @argv0: shell name (for errors)
+ * @line_number: pointer to current line number
+ */
 void process_line(char *line, char *argv0, int *line_number)
 {
-	char **args = parse_args(line);
+	char **args;
 
+	if (!line)
+		return;
+
+	args = parse_args(line);
 	if (!args || !args[0])
 	{
 		free(args);
@@ -50,14 +53,13 @@ void process_line(char *line, char *argv0, int *line_number)
 }
 
 /**
-* handle_stdin - main loop reading stdin and executing commands
-* @argv0: shell name (for errors)
-* @line_number: pointer to line counter
-*/
+ * handle_stdin - main loop reading stdin and executing commands
+ * @argv0: shell name (for errors)
+ * @line_number: pointer to line counter
+ */
 void handle_stdin(char *argv0, int *line_number)
 {
 	int interactive = isatty(STDIN_FILENO);
-
 	size_t len = 0;
 	char *line;
 
@@ -73,25 +75,28 @@ void handle_stdin(char *argv0, int *line_number)
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
-		if (line[0] == '\0')
+
+		if (line[0] == '\0') /* empty line */
 		{
 			free(line);
 			continue;
 		}
-		if (strcmp(line, "exit") == 0)
+
+		if (strcmp(line, "exit") == 0) /* exit builtin */
 		{
 			free(line);
 			break;
 		}
+
 		process_line(line, argv0, line_number);
 		free(line);
 	}
 }
 
 /**
-* run_shell - entry point for shell main loop
-* @argv0: shell name (for errors)
-*/
+ * run_shell - entry point for shell main loop
+ * @argv0: shell name (for errors)
+ */
 void run_shell(char *argv0)
 {
 	int line_number = 0;
