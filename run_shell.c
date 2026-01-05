@@ -66,19 +66,19 @@ void handle_stdin(char *argv0, int *line_number)
 	while (1)
 	{
 		if (interactive)
-			print_prompt();
+			print_prompt(); /* affiche exactement "($) " */
 
 		line = read_line(&len);
-		if (!line)
+		if (!line) /* EOF */
 		{
 			if (interactive)
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
 
-		(*line_number)++;
+		(*line_number)++; /* TOUJOURS */
 
-		if (line[0] == '\0') /* empty line */
+		if (line[0] == '\0') /* ligne vide */
 		{
 			free(line);
 			continue;
@@ -90,13 +90,15 @@ void handle_stdin(char *argv0, int *line_number)
 			break;
 		}
 
-		args = parse_args(line);
+		args = parse_args(line); /* split ligne en argv[] */
 		if (args && args[0])
 			execute(argv0, args, *line_number);
+
 		free(args);
 		free(line);
 	}
 }
+
 
 /**
  * run_shell - entry point for shell main loop
