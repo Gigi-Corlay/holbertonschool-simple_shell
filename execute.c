@@ -95,8 +95,7 @@ int execute(char *argv0, char **argv, int line_number)
 	if (pid == 0)
 	{
 		execve(cmd_path, argv, environ);
-		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, argv[0]);
+		perror(argv0);
 		_exit(127);
 	}
 	else if (pid < 0)
