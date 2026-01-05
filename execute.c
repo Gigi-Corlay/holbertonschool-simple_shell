@@ -1,41 +1,35 @@
 #include "main.h"
 
 /**
- * execute - forks a child process and executes a command.
- * @argv0: name of the shell for error messages
- * @command: command to execute
- * @line_number: line number of the command
+ * execute - forks a child process and executes a command with arguments
+ * @argv0: name of the shell (for error messages)
+ * @argv: array of arguments (command + args)
+ * @line_number: command count
  *
- * Return: 0 on success, or 1 on failure.
+ * Return: 0 on success, 1 on failure
  */
-int execute(char *argv0, char *command, int line_number)
+int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;
 	int status;
-	char *argv[2];
 
-	if (!command || command[0] == '\0')
+	if (!argv || !argv[0])
 		return (1);
 
 	pid = fork();
 	if (pid == 0)
 	{
-		argv[0] = command;
-		argv[1] = NULL;
 		execve(argv[0], argv, environ);
 		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, command);
+			argv0, line_number, argv[0]);
 		_exit(127);
 	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-	}
-	else
+	else if (pid < 0)
 	{
 		perror("fork");
 		return (1);
 	}
 
+	waitpid(pid, &status, 0);
 	return (0);
 }

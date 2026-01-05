@@ -1,8 +1,9 @@
 #include "main.h"
 #include <signal.h>
+#include <unistd.h>
 
 /**
- * sigint_handler - handles Ctrl+C
+ * sigint_handler - handles Ctrl+C (SIGINT)
  * @sig: signal number
  */
 void sigint_handler(int sig)
@@ -13,8 +14,9 @@ void sigint_handler(int sig)
 
 /**
  * main - entry point of the shell
- * @argc: number of arguments (unused)
+ * @argc: number of arguments
  * @argv: array of arguments
+ *
  * Return: 0
  */
 int main(int argc, char **argv)
