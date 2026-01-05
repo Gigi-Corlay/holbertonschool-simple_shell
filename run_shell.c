@@ -27,6 +27,8 @@ void run_shell(char *argv0)
 			break;
 		}
 
+		line_number++;
+
 		if (nread <= 1)
 			continue;
 
@@ -40,7 +42,7 @@ void run_shell(char *argv0)
 		if (strcmp(cmd, "exit") == 0)
 			break;
 
-		line_number++;
+
 		execute(argv0, cmd, line_number);
 	}
 
