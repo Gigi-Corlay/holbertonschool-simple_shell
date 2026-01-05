@@ -27,31 +27,6 @@ char *read_line(size_t *len)
 }
 
 /**
- * process_line - parses a line into arguments and executes it
- * @line: input line
- * @argv0: shell name (for errors)
- * @line_number: pointer to current line number
- */
-void process_line(char *line, char *argv0, int *line_number)
-{
-	char **args;
-
-	if (!line)
-		return;
-
-	args = parse_args(line);
-	if (!args || !args[0])
-	{
-		free(args);
-		return;
-	}
-
-	execute(argv0, args, *line_number);
-
-	free(args);
-}
-
-/**
  * handle_stdin - main loop reading stdin and executing commands
  * @argv0: shell name (for errors)
  * @line_number: pointer to line counter
