@@ -61,6 +61,7 @@ void handle_stdin(char *argv0, int *line_number)
 	int interactive = isatty(STDIN_FILENO);
 	size_t len = 0;
 	char *line;
+	char **args;
 
 	while (1)
 	{
@@ -89,7 +90,7 @@ void handle_stdin(char *argv0, int *line_number)
 			break;
 		}
 
-		process_line(line, argv0, line_number);
+		args = parse_args(line);
 		if (args && args[0])
 			execute(argv0, args, *line_number);
 		free(args);
