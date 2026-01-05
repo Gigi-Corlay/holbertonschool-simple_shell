@@ -46,7 +46,6 @@ void process_line(char *line, char *argv0, int *line_number)
 		return;
 	}
 
-	(*line_number)++;
 	execute(argv0, args, *line_number);
 
 	free(args);
@@ -76,6 +75,8 @@ void handle_stdin(char *argv0, int *line_number)
 			break;
 		}
 
+		(*line_number)++;
+
 		if (line[0] == '\0') /* empty line */
 		{
 			free(line);
@@ -89,6 +90,9 @@ void handle_stdin(char *argv0, int *line_number)
 		}
 
 		process_line(line, argv0, line_number);
+		if (args && args[0])
+			execute(argv0, args, *line_number);
+		free(args);
 		free(line);
 	}
 }
