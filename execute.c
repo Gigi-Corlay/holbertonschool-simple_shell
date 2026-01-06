@@ -44,7 +44,7 @@ char *find_command_in_path(char *cmd)
 	token = strtok(copy, ":");
 	while (token)
 	{
-		if (token[0] == '\0')  /* PATH vide = répertoire courant */
+		if (token[0] == '\0')
 			token = ".";
 
 		len = strlen(token) + strlen(cmd) + 2;
