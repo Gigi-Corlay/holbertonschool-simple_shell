@@ -1,10 +1,10 @@
 #include "main.h"
 
 /**
- * get_path_from_environ - get PATH value from environment
- *
- * Return: pointer to PATH value or NULL
- */
+* get_path_from_environ - get PATH value from environment
+*
+* Return: pointer to PATH value or NULL
+*/
 char *get_path_from_environ(void)
 {
 	int i = 0;
@@ -19,15 +19,19 @@ char *get_path_from_environ(void)
 }
 
 /**
- * find_command_in_path - search command in PATH directories
- * @cmd: command name
- *
- * Return: malloc'ed full path or NULL
- */
+* find_command_in_path - search command in PATH directories
+* @cmd: command name
+*
+* Return: malloc'ed full path or NULL
+*/
 char *find_command_in_path(char *cmd)
 {
 	char *path, *copy, *token, *full;
+
 	size_t len;
+
+	if (!cmd)
+		return (NULL);
 
 	path = get_path_from_environ();
 	if (!path)
@@ -40,6 +44,9 @@ char *find_command_in_path(char *cmd)
 	token = strtok(copy, ":");
 	while (token)
 	{
+		if (token[0] == '\0')  /* PATH vide = répertoire courant */
+			token = ".";
+
 		len = strlen(token) + strlen(cmd) + 2;
 		full = malloc(len);
 		if (!full)
@@ -49,6 +56,7 @@ char *find_command_in_path(char *cmd)
 		}
 
 		snprintf(full, len, "%s/%s", token, cmd);
+
 		if (access(full, X_OK) == 0)
 		{
 			free(copy);
@@ -58,22 +66,25 @@ char *find_command_in_path(char *cmd)
 		free(full);
 		token = strtok(NULL, ":");
 	}
+
 	free(copy);
 	return (NULL);
 }
 
+
 /**
- * execute - fork and execute a command
- * @argv0: shell name
- * @argv: arguments array
- * @line_number: command count
- *
- * Return: 0 on success, 1 on failure
- */
+* execute - fork and execute a command
+* @argv0: shell name
+* @argv: arguments array
+* @line_number: command count
+*
+* Return: 0 on success, 1 on failure
+*/
 int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;
 	int status;
+
 	char *cmd;
 
 	if (!argv || !argv[0])
@@ -108,14 +119,17 @@ int execute(char *argv0, char **argv, int line_number)
 	if (cmd != argv[0])
 		free(cmd);
 
-	return ((WIFEXITED(status) ? WEXITSTATUS(status) : 1));
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else
+		return (1);
 }
 
 
 /**
- * handle_env - print environment variables
- * @args: unused
- */
+* handle_env - print environment variables
+* @args: unused
+*/
 void handle_env(char **args)
 {
 	int i = 0;
