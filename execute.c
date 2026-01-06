@@ -43,11 +43,17 @@ char *find_command_in_path(char *cmd)
 		len = strlen(token) + strlen(cmd) + 2;
 		full = malloc(len);
 		if (!full)
-			return (free(copy), NULL);
+		{
+			free(copy);
+			return (NULL);
+		}
 
 		sprintf(full, "%s/%s", token, cmd);
 		if (access(full, X_OK) == 0)
-			return (free(copy), full);
+		{
+			free(copy);
+			return (full);
+		}
 
 		free(full);
 		token = strtok(NULL, ":");
@@ -77,19 +83,34 @@ int execute(char *argv0, char **argv, int line_number)
 	if (!cmd)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n",
-				argv0, line_number, argv[0]);
-		return (1);
+			argv0, line_number, argv[0]);
+		return (127);
 	}
 
 	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		if (cmd != argv[0])
+			free(cmd);
+		return (1);
+	}
+
 	if (pid == 0)
+	{
 		execve(cmd, argv, environ);
+		perror(argv0);
+		_exit(127);
+	}
 
 	waitpid(pid, &status, 0);
+
 	if (cmd != argv[0])
 		free(cmd);
-	return (0);
+
+	return ((WIFEXITED(status) ? WEXITSTATUS(status) : 1));
 }
+
 
 /**
  * handle_env - print environment variables

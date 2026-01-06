@@ -9,10 +9,10 @@
 */
 char **parse_args(char *line)
 {
-	char **argv = malloc(sizeof(char *) * 64);
-
+	char **argv;
 	int i = 0;
 
+	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
@@ -22,7 +22,6 @@ char **parse_args(char *line)
 		i++;
 		argv[i] = strtok(NULL, " \t\n");
 	}
-
 	return (argv);
 }
 
