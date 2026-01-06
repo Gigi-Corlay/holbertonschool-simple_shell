@@ -23,6 +23,8 @@ int execute(char *argv0, char **argv, int line_number);
 char *find_command_in_path(char *cmd);
 char *find_full_path(char *command);
 char *get_path_from_environ(void);
+char *build_full_path(char *dir, char *cmd);
+int fork_and_execute(char *cmd, char **argv, char *argv0);
 
 /* Built-ins */
 void handle_env(char **args);

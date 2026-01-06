@@ -1,10 +1,15 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 /**
-* get_path_from_environ - get PATH value from environment
-*
-* Return: pointer to PATH value or NULL
-*/
+ * get_path_from_environ - get PATH value from environment
+ *
+ * Return: pointer to PATH value or NULL
+ */
 char *get_path_from_environ(void)
 {
 	int i = 0;
@@ -19,32 +24,22 @@ char *get_path_from_environ(void)
 }
 
 /**
-* find_command_in_path - search command in PATH directories
-* @cmd: command name
-*
-* Return: malloc'ed full path or NULL
-*/
-char *find_command_in_path(char *cmd)
+ * fork_and_execute - fork and run command
+ * @cmd: full path or argv[0]
+ * @argv: arguments
+ * @argv0: shell name
+ *
+ * Return: status code
+ */
+int fork_and_execute(char *cmd, char **argv, char *argv0)
 {
-	char *path, *copy, *token, *full;
+	pid_t pid;
+	int status;
 
-	size_t len;
-
-	if (!cmd)
-		return (NULL);
-
-	path = get_path_from_environ();
-	if (!path)
-		return (NULL);
-
-	copy = strdup(path);
-	if (!copy)
-		return (NULL);
-
-	token = strtok(copy, ":");
-	while (token)
+	pid = fork();
+	if (pid < 0)
 	{
-		if (token[0] == '\0')
+		if (token[0] == '\0')  /* PATH vide = répertoire courant */
 			token = ".";
 
 		len = strlen(token) + strlen(cmd) + 2;
@@ -55,37 +50,32 @@ char *find_command_in_path(char *cmd)
 			return (NULL);
 		}
 
-		snprintf(full, len, "%s/%s", token, cmd);
-
-		if (access(full, X_OK) == 0)
-		{
-			free(copy);
-			return (full);
-		}
-
-		free(full);
-		token = strtok(NULL, ":");
+	if (pid == 0)
+	{
+		execve(cmd, argv, environ);
+		perror(argv0);
+		_exit(127);
 	}
 
-	free(copy);
-	return (NULL);
+	waitpid(pid, &status, 0);
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (1);
 }
 
-
 /**
-* execute - fork and execute a command
-* @argv0: shell name
-* @argv: arguments array
-* @line_number: command count
-*
-* Return: 0 on success, 1 on failure
-*/
+ * execute - fork and execute a command
+ * @argv0: shell name
+ * @argv: arguments array
+ * @line_number: command count
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int execute(char *argv0, char **argv, int line_number)
 {
-	pid_t pid;
-	int status;
-
 	char *cmd;
+	int status;
 
 	if (!argv || !argv[0])
 		return (1);
@@ -98,38 +88,18 @@ int execute(char *argv0, char **argv, int line_number)
 		return (127);
 	}
 
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		if (cmd != argv[0])
-			free(cmd);
-		return (1);
-	}
-
-	if (pid == 0)
-	{
-		execve(cmd, argv, environ);
-		perror(argv0);
-		_exit(127);
-	}
-
-	waitpid(pid, &status, 0);
+	status = fork_and_execute(cmd, argv, argv0);
 
 	if (cmd != argv[0])
 		free(cmd);
 
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else
-		return (1);
+	return (status);
 }
 
-
 /**
-* handle_env - print environment variables
-* @args: unused
-*/
+ * handle_env - print environment variables
+ * @args: unused
+ */
 void handle_env(char **args)
 {
 	int i = 0;
