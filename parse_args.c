@@ -10,18 +10,24 @@
 char **parse_args(char *line)
 {
 	char **argv;
+	char *token;
 	int i = 0;
+
+	if (!line)
+		return (NULL);
 
 	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
-	argv[i] = strtok(line, " \t\n");
-	while (argv[i])
+	token = strtok(line, " \t\n");
+	while (token)
 	{
-		i++;
-		argv[i] = strtok(NULL, " \t\n");
+		argv[i++] = token;
+		token = strtok(NULL, " \t\n");
 	}
+	argv[i] = NULL;
+
 	return (argv);
 }
 

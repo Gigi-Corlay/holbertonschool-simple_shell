@@ -48,7 +48,7 @@ char *find_command_in_path(char *cmd)
 			return (NULL);
 		}
 
-		sprintf(full, "%s/%s", token, cmd);
+		snprintf(full, len, "%s/%s", token, cmd);
 		if (access(full, X_OK) == 0)
 		{
 			free(copy);
@@ -88,7 +88,7 @@ int execute(char *argv0, char **argv, int line_number)
 	}
 
 	pid = fork();
-	if (pid == -1)
+	if (pid < 0)
 	{
 		perror("fork");
 		if (cmd != argv[0])
