@@ -39,17 +39,31 @@ void process_line(char *argv0, char **args, char *line, int *line_number)
 	if (!args || !args[0])
 		return;
 
-	/* exit builtin */
-	handle_exit(args, line, argv0, line_number);
+	/* Strip quotes around first argument */
+	if ((args[0][0] == '"' && args[0][strlen(args[0]) - 1] == '"') ||
+		(args[0][0] == '\'' && args[0][strlen(args[0]) - 1] == '\''))
+	{
+		args[0][strlen(args[0]) - 1] = '\0';
+		args[0]++;
+	}
 
-	/* env builtin */
-	if (strcmp(args[0], "env") == 0)
+	if (strcmp(args[0], "exit") == 0)
+	{
+		handle_exit(args, line, argv0, line_number);
+	}
+	else if (strcmp(args[0], "env") == 0)
 	{
 		handle_env(args);
 		free(args);
 		free(line);
-		return;
 	}
+	else
+	{
+		execute(argv0, args, *line_number);
+		free(args);
+		free(line);
+	}
+}
 
 	/* external command */
 	execute(argv0, args, *line_number);
