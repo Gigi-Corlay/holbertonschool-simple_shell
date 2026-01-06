@@ -1,8 +1,7 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 /**
  * read_line - lit une ligne depuis stdin
@@ -11,14 +10,11 @@
  */
 char *read_line(size_t *len)
 {
-	char *line = NULL;
-	ssize_t nread;
-
-	nread = getline(&line, len, stdin);
-	if (nread == -1)
+	if (handle_exit(args))
 	{
+		free(args);
 		free(line);
-		return (NULL);
+		exit(0);
 	}
 
 	if (nread > 0 && line[nread - 1] == '\n')
@@ -55,9 +51,12 @@ int handle_exit(char **args, char *line)
 	{
 		free(args);
 		free(line);
-		exit(0);
+		return;
 	}
-	return (0);
+
+	execute(argv0, args, *line_number);
+	free(args);
+	free(line);
 }
 
 /**
@@ -75,35 +74,31 @@ void handle_stdin(char *argv0, int *line_number)
 	while (1)
 	{
 		if (interactive)
-			print_prompt(); /* affiche "($) " */
+			print_prompt();
 
 		line = read_line(&len);
-		if (!line) /* EOF */
+		if (!line)
 			break;
+
 		(*line_number)++;
-		if (line[0] == '\0') /* ligne vide */
+
+		if (line[0] == '\0')
 		{
 			free(line);
 			continue;
 		}
-		args = parse_args(line);
-		if (args && args[0])
-		{
-			if (handle_exit(args, line)) /* exit builtin */
-				continue;
 
-			if (strcmp(args[0], "env") == 0) /* env builtin */
-			{
-				handle_env(args);
-				free(args);
-				free(line);
-				continue;
-			}
-			execute(argv0, args, *line_number); /* commande normale */
+		args = parse_args(line);
+		if (!args || !args[0])
+		{
 			free(args);
+			free(line);
+			continue;
 		}
-		free(line);
+
+		process_line(argv0, args, line, line_number);
 	}
+
 	if (interactive)
 		write(STDOUT_FILENO, "\n", 1);
 	exit(0);
