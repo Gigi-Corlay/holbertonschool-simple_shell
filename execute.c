@@ -24,10 +24,10 @@ char *get_path_from_environ(void)
 }
 
 /**
- * fork_and_execute - fork and run command
+ * fork_and_execute - fork and run a command
  * @cmd: full path or argv[0]
  * @argv: arguments
- * @argv0: shell name
+ * @argv0: shell name (for error)
  *
  * Return: status code
  */
@@ -39,16 +39,9 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 	pid = fork();
 	if (pid < 0)
 	{
-		if (token[0] == '\0')  /* PATH vide = répertoire courant */
-			token = ".";
-
-		len = strlen(token) + strlen(cmd) + 2;
-		full = malloc(len);
-		if (!full)
-		{
-			free(copy);
-			return (NULL);
-		}
+		perror("fork");
+		return (1);
+	}
 
 	if (pid == 0)
 	{
@@ -70,7 +63,7 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
  * @argv: arguments array
  * @line_number: command count
  *
- * Return: 0 on success, 1 on failure
+ * Return: status code
  */
 int execute(char *argv0, char **argv, int line_number)
 {
