@@ -28,19 +28,18 @@ char *find_command_in_path(char *cmd)
 	char *path, *path_copy, *token, *full_path;
 	size_t len;
 
-	if (!cmd)
-		return (NULL);
 	path = get_path_from_environ();
 	if (!path)
 		return (NULL);
-	path_copy = malloc(strlen(path) + 1);
+
+	path_copy = strdup(path);
 	if (!path_copy)
 		return (NULL);
-	strcpy(path_copy, path);
+
 	token = strtok(path_copy, ":");
 	while (token)
 	{
-		len = strlen(token) + 1 + strlen(cmd);
+		len = strlen(token) + strlen(cmd) + 2;
 		full_path = malloc(len);
 		if (!full_path)
 		{
@@ -76,7 +75,7 @@ int execute(char *argv0, char **argv, int line_number)
 	int status;
 	char *cmd_path;
 
-	if (!argv || !argv[0] || argv[0][0] == '\0')
+	if (!argv || !argv[0])
 		return (1);
 
 	if (strchr(argv[0], '/'))
