@@ -42,13 +42,11 @@ char **get_args(char *line)
 * @line: the original line
 * Return: 1 if exit was called, 0 otherwise
 */
-int handle_exit(char **args, char *line)
+int handle_exit(char **args)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
-		free(args);
-		free(line);
-		exit(0);
+		return (1);
 	}
 	return (0);
 }
@@ -90,8 +88,12 @@ void handle_stdin(char *argv0, int *line_number)
 		args = get_args(line);
 		if (args && args[0])
 		{
-			if (handle_exit(args, line))
-				continue;
+			if (handle_exit(args))
+			{
+				free(args);
+				free(line);
+				break;
+			}
 
 			execute(argv0, args, *line_number);
 
