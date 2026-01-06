@@ -34,6 +34,7 @@ char *read_line(size_t *len)
 */
 void handle_stdin(char *argv0, int *line_number)
 {
+	(void)argv0;
 	int interactive = isatty(STDIN_FILENO);
 
 	size_t len = 0;
@@ -44,7 +45,7 @@ void handle_stdin(char *argv0, int *line_number)
 	while (1)
 	{
 		if (interactive)
-			print_prompt(); /* affiche exactement "($) " */
+			print_prompt();
 
 		line = read_line(&len);
 		if (!line)
@@ -64,16 +65,22 @@ void handle_stdin(char *argv0, int *line_number)
 
 		args = parse_args(line);
 		if (args && args[0])
+		{
 			if (strcmp(args[0], "exit") == 0)
 			{
 				free(args);
 				free(line);
 				exit(0);
 			}
+
+			execute(argv0, args, *line_number);
+		}
+
 		free(args);
 		free(line);
 	}
 }
+
 
 /**
 * run_shell - entry point for shell main loop
