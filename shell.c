@@ -1,20 +1,36 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
- * print_prompt - prints the shell prompt
- */
-void print_prompt(void)
+* read_line - read a line from standard input
+* @len: pointer to buffer size
+* Return: pointer to line (to free), NULL on EOF
+*/
+char *read_line(size_t *len)
 {
-	write(STDOUT_FILENO, "($) ", 4);
+	char *line = NULL;
+
+	ssize_t nread;
+
+	nread = getline(&line, len, stdin);
+	if (nread == -1)
+	{
+		free(line);
+		return (NULL);
+	}
+
+	if (nread > 0 && line[nread - 1] == '\n')
+		line[nread - 1] = '\0';
+
+	return (line);
 }
 
 /**
- * read_command - reads one line from standard input
- * @line: buffer to store input
- * @len: pointer to buffer size
- * Return: number of characters read, -1 on EOF
- */
-ssize_t read_command(char **line, size_t *len)
+* print_prompt - print shell prompt
+*/
+void print_prompt(void)
 {
-	return (getline(line, len, stdin));
+	write(STDOUT_FILENO, "($) ", 4);
 }

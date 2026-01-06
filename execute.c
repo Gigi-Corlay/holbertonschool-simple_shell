@@ -1,9 +1,12 @@
 #include "main.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
-* get_path_from_environ - returns the value of PATH from environ
-* Return: pointer to PATH string, or NULL if not found
+* get_path_from_environ - get the PATH variable from environment
+* Return: pointer to PATH string, NULL if not found
 */
 char *get_path_from_environ(void)
 {
@@ -19,13 +22,14 @@ char *get_path_from_environ(void)
 }
 
 /**
-* find_command_in_path - searches for a command in PATH
-* @cmd: command to find
-* Return: malloc'ed full path if found, NULL if not
+* find_command_in_path - search for a command in PATH directories
+* @cmd: command to search
+* Return: malloc'ed full path if found, NULL otherwise
 */
 char *find_command_in_path(char *cmd)
 {
 	char *path, *path_copy, *token, *full_path;
+
 	size_t len;
 
 	path = get_path_from_environ();
@@ -49,6 +53,7 @@ char *find_command_in_path(char *cmd)
 		strcpy(full_path, token);
 		strcat(full_path, "/");
 		strcat(full_path, cmd);
+
 		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
@@ -57,22 +62,23 @@ char *find_command_in_path(char *cmd)
 		free(full_path);
 		token = strtok(NULL, ":");
 	}
+
 	free(path_copy);
 	return (NULL);
 }
 
 /**
-* execute - forks a child process and executes a command with arguments
-* @argv0: name of the shell (for error messages)
-* @argv: array of arguments (command + args)
-* @line_number: command count
-*
-* Return: 0 on success, 1 on failure
+* execute - fork a child process and execute a command
+* @argv0: shell name (for error messages)
+* @argv: array of arguments (command + options)
+* @line_number: line counter
+* Return: 0 if success, 1 if failure
 */
 int execute(char *argv0, char **argv, int line_number)
 {
 	pid_t pid;
 	int status;
+
 	char *cmd_path;
 
 	if (!argv || !argv[0])
@@ -86,7 +92,7 @@ int execute(char *argv0, char **argv, int line_number)
 	if (!cmd_path)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, argv[0]);
+				argv0, line_number, argv[0]);
 		return (1);
 	}
 
@@ -110,4 +116,21 @@ int execute(char *argv0, char **argv, int line_number)
 		free(cmd_path);
 
 	return (0);
+}
+
+/**
+* handle_env - print all environment variables
+* @args: arguments (unused)
+*/
+void handle_env(char **args)
+{
+	int i = 0;
+
+	(void)args;
+
+	while (environ[i])
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
 }
