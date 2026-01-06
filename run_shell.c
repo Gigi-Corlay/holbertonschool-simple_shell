@@ -26,6 +26,32 @@ char *read_line(size_t *len)
 
 	return (line);
 }
+/**
+* get_args - parse a line into arguments
+* @line: input line
+* Return: array of arguments
+*/
+char **get_args(char *line)
+{
+	return (parse_args(line));
+}
+
+/**
+* handle_exit - check for exit command and exit
+* @args: array of arguments
+* @line: the original line
+* Return: 1 if exit was called, 0 otherwise
+*/
+int handle_exit(char **args, char *line)
+{
+	if (strcmp(args[0], "exit") == 0)
+	{
+		free(args);
+		free(line);
+		exit(0);
+	}
+	return (0);
+}
 
 /**
 * handle_stdin - main loop reading stdin and executing commands
@@ -34,7 +60,6 @@ char *read_line(size_t *len)
 */
 void handle_stdin(char *argv0, int *line_number)
 {
-	(void)argv0;
 	int interactive = isatty(STDIN_FILENO);
 
 	size_t len = 0;
@@ -56,30 +81,27 @@ void handle_stdin(char *argv0, int *line_number)
 		}
 
 		(*line_number)++;
-
 		if (line[0] == '\0')
 		{
 			free(line);
 			continue;
 		}
 
-		args = parse_args(line);
+		args = get_args(line);
 		if (args && args[0])
 		{
-			if (strcmp(args[0], "exit") == 0)
-			{
-				free(args);
-				free(line);
-				exit(0);
-			}
+			if (handle_exit(args, line))
+				continue;
 
 			execute(argv0, args, *line_number);
-		}
 
-		free(args);
+			free(args);
+		}
 		free(line);
 	}
 }
+
+
 
 
 /**
