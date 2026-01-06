@@ -73,21 +73,15 @@ void handle_stdin(char *argv0, int *line_number)
 		{
 			if (interactive)
 				write(STDOUT_FILENO, "\n", 1);
-			break;
+			exit(0);
 		}
 
 		(*line_number)++;
 
-		if (line[0] == '\0') /* empty line */
+		if (strcmp(line, "exit") == 0)
 		{
 			free(line);
-			continue;
-		}
-
-		if (strcmp(line, "exit") == 0) /* exit builtin */
-		{
-			free(line);
-			break;
+			exit(0);
 		}
 
 		args = parse_args(line);
