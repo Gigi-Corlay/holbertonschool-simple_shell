@@ -1,17 +1,17 @@
 #include "main.h"
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 /**
-* read_line - reads one line from stdin
-* @len: pointer to buffer size (updated by getline)
-* Return: pointer to line (must be freed) or NULL on EOF
-*/
+ * read_line - lit une ligne depuis stdin
+ * @len: pointeur sur la taille du buffer (getline met à jour)
+ * Return: pointeur vers la ligne (à free), NULL si EOF
+ */
 char *read_line(size_t *len)
 {
 	char *line = NULL;
-
 	ssize_t nread;
 
 	nread = getline(&line, len, stdin);
@@ -26,90 +26,93 @@ char *read_line(size_t *len)
 
 	return (line);
 }
+
 /**
-* get_args - parse a line into arguments
-* @line: input line
-* Return: array of arguments
-*/
-char **get_args(char *line)
+ * handle_env - implémentation du builtin env
+ * @args: tableau d'arguments
+ */
+void handle_env(char **args)
 {
-	return (parse_args(line));
+	int i = 0;
+
+	(void)args;
+	while (environ[i])
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
 }
 
 /**
-* handle_exit - check for exit command and exit
-* @args: array of arguments
-* @line: the original line
-* Return: 1 if exit was called, 0 otherwise
-*/
-int handle_exit(char **args)
+ * handle_exit - check si la commande est exit et quitte le shell
+ * @args: tableau d'arguments
+ * @line: ligne originale
+ * Return: 1 si exit a été appelé, 0 sinon
+ */
+int handle_exit(char **args, char *line)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
-		return (1);
+		free(args);
+		free(line);
+		exit(0);
 	}
 	return (0);
 }
 
 /**
-* handle_stdin - main loop reading stdin and executing commands
-* @argv0: shell name (for errors)
-* @line_number: pointer to line counter
-*/
+ * handle_stdin - boucle principale du shell
+ * @argv0: nom du shell (pour les messages d'erreur)
+ * @line_number: pointeur sur le compteur de lignes
+ */
 void handle_stdin(char *argv0, int *line_number)
 {
 	int interactive = isatty(STDIN_FILENO);
-
 	size_t len = 0;
 	char *line;
-
 	char **args;
 
 	while (1)
 	{
 		if (interactive)
-			print_prompt();
+			print_prompt(); /* affiche "($) " */
 
 		line = read_line(&len);
-		if (!line)
-		{
-			if (interactive)
-				write(STDOUT_FILENO, "\n", 1);
-			exit(0);
-		}
-
+		if (!line) /* EOF */
+			break;
 		(*line_number)++;
-		if (line[0] == '\0')
+		if (line[0] == '\0') /* ligne vide */
 		{
 			free(line);
 			continue;
 		}
-
-		args = get_args(line);
+		args = parse_args(line);
 		if (args && args[0])
 		{
-			if (handle_exit(args))
+			if (handle_exit(args, line)) /* exit builtin */
+				continue;
+
+			if (strcmp(args[0], "env") == 0) /* env builtin */
 			{
+				handle_env(args);
 				free(args);
 				free(line);
-				break;
+				continue;
 			}
-
-			execute(argv0, args, *line_number);
-
+			execute(argv0, args, *line_number); /* commande normale */
 			free(args);
 		}
 		free(line);
 	}
+	if (interactive)
+		write(STDOUT_FILENO, "\n", 1);
+	exit(0);
 }
 
-
-
-
 /**
-* run_shell - entry point for shell main loop
-* @argv0: shell name (for errors)
-*/
+ * run_shell - point d'entrée du shell
+ * @argv0: nom du shell (pour messages d'erreur)
+ */
 void run_shell(char *argv0)
 {
 	int line_number = 0;
