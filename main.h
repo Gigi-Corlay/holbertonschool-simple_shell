@@ -40,5 +40,5 @@ void sigint_handler(int sig);
 
 /* Exit built-in */
 int handle_exit(char **args, char *line, char *argv0, int *line_number);
-
+int handle_cd(char **args);
 #endif
