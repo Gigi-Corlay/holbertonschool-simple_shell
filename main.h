@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <string.h>
 
+/* Environment variable pointer */
 extern char **environ;
 
 /* Shell I/O */
@@ -21,10 +22,10 @@ char *trim_and_get_command(char *line);
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
 char *find_command_in_path(char *cmd);
-char *find_full_path(char *command);
-char *get_path_from_environ(void);
 char *build_full_path(char *dir, char *cmd);
-int fork_and_execute(char *cmd, char **argv, char *argv0);
+char *get_path_from_environ(void);
+int fork_and_execute(char *cmd, char **argv);
+char *resolve_command_path(char **argv);
 
 /* Built-ins */
 void handle_env(char **args);
@@ -36,5 +37,8 @@ void process_line(char *argv0, char **args, char *line, int *line_number);
 
 /* Signal handling */
 void sigint_handler(int sig);
+
+/* Exit built-in */
+int handle_exit(char **args, char *line, char *argv0, int *line_number);
 
 #endif

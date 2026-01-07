@@ -24,19 +24,16 @@ char *get_path_from_environ(void)
 }
 
 /**
- * fork_and_execute - fork and execute a valid command
+ * fork_and_execute - fork and execute a command
  * @cmd: full path to executable
  * @argv: arguments array
- * @argv0: shell name
  *
  * Return: exit status of child process
  */
-int fork_and_execute(char *cmd, char **argv, char *argv0)
+int fork_and_execute(char *cmd, char **argv)
 {
 	pid_t pid;
 	int status;
-
-	(void)argv0;
 
 	pid = fork();
 	if (pid < 0)
@@ -55,14 +52,43 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+
 	return (1);
 }
 
 /**
- * execute - resolve command path and execute it
+ * resolve_command_path - find full path of command
+ * @argv: arguments array
+ *
+ * Return: malloc'ed path or NULL if not found
+ */
+char *resolve_command_path(char **argv)
+{
+	char *cmd;
+
+	if (!argv || !argv[0])
+		return (NULL);
+
+	if (strchr(argv[0], '/'))
+		cmd = argv[0];
+	else
+		cmd = find_command_in_path(argv[0]);
+
+	if (!cmd || access(cmd, X_OK) != 0)
+	{
+		if (cmd && cmd != argv[0])
+			free(cmd);
+		return (NULL);
+	}
+
+	return (cmd);
+}
+
+/**
+ * execute - execute a command
  * @argv0: shell name
  * @argv: arguments array
- * @line_number: command count (unused)
+ * @line_number: command line number
  *
  * Return: status code
  */
@@ -71,23 +97,18 @@ int execute(char *argv0, char **argv, int line_number)
 	char *cmd;
 	int status;
 
-	(void)line_number; /* suppress unused parameter warning */
-
 	if (!argv || !argv[0])
 		return (1);
 
-	cmd = strchr(argv[0], '/') ? argv[0] : find_command_in_path(argv[0]);
-
-	/* Command must exist and be executable BEFORE fork */
-	if (!cmd || access(cmd, X_OK) != 0)
+	cmd = resolve_command_path(argv);
+	if (!cmd)
 	{
-		fprintf(stderr, "%s: %s: not found\n", argv0, argv[0]);
-		if (cmd && cmd != argv[0])
-			free(cmd);
+		fprintf(stderr, "%s: %d: %s: not found\n",
+			argv0, line_number, argv[0]);
 		return (127);
 	}
 
-	status = fork_and_execute(cmd, argv, argv0);
+	status = fork_and_execute(cmd, argv);
 
 	if (cmd != argv[0])
 		free(cmd);
