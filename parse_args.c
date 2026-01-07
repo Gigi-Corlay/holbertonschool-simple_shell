@@ -37,18 +37,21 @@ char *build_full_path(char *dir, char *cmd)
  */
 char *find_command_in_path(char *cmd)
 {
-	char *path, *copy, *token, *full;
+	char *path_env, *token;
+	char *full;
+	char *copy;
 
 	if (!cmd)
 		return (NULL);
 
-	path = get_path_from_environ();
-	if (!path)
+	path_env = get_path_from_environ();
+	if (!path_env)
 		return (NULL);
 
-	copy = strdup(path);
+	copy = malloc(strlen(path_env) + 1);
 	if (!copy)
 		return (NULL);
+	strcpy(copy, path_env);  /* autorisé : strcpy */
 
 	token = strtok(copy, ":");
 	while (token)
@@ -75,10 +78,11 @@ char *find_command_in_path(char *cmd)
 }
 
 /**
-* parse_args - split a line into arguments
-* @line: input line
-* Return: NULL-terminated array of arguments
-*/
+ * parse_args - split a line into arguments
+ * @line: input line
+ *
+ * Return: NULL-terminated array of arguments
+ */
 char **parse_args(char *line)
 {
 	char **argv;
@@ -88,12 +92,13 @@ char **parse_args(char *line)
 	if (!line)
 		return (NULL);
 
+	/* taille fixe pour les arguments */
 	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
 	token = strtok(line, " \t\n");
-	while (token)
+	while (token && i < 63) /* 63 pour garder une place pour le NULL */
 	{
 		argv[i++] = token;
 		token = strtok(NULL, " \t\n");
@@ -104,22 +109,31 @@ char **parse_args(char *line)
 }
 
 /**
-* trim_and_get_command - trim leading spaces and get first word
-* @line: input line
-* Return: pointer to first command, NULL if empty
-*/
+ * trim_and_get_command - trim leading/trailing spaces and get first word
+ * @line: input line
+ *
+ * Return: pointer to first command, NULL if empty
+ */
 char *trim_and_get_command(char *line)
 {
-	char *trimmed = line;
+	char *start, *end;
 
 	if (!line)
 		return (NULL);
 
-	while (*trimmed == ' ' || *trimmed == '\t')
-		trimmed++;
+	start = line;
+	while (*start == ' ' || *start == '\t' || *start == '\n')
+		start++;
 
-	if (*trimmed == '\0')
+	if (*start == '\0')
 		return (NULL);
 
-	return (strtok(trimmed, " \t"));
+	end = start + strlen(start) - 1;
+	while (end > start && (*end == ' ' || *end == '\t' || *end == '\n'))
+	{
+		*end = '\0';
+		end--;
+	}
+
+	return (start);
 }
