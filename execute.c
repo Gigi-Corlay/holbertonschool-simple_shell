@@ -24,17 +24,19 @@ char *get_path_from_environ(void)
 }
 
 /**
- * fork_and_execute - fork and run a command
- * @cmd: full path or argv[0]
- * @argv: arguments
- * @argv0: shell name (for error)
+ * fork_and_execute - fork and execute a valid command
+ * @cmd: full path to executable
+ * @argv: arguments array
+ * @argv0: shell name
  *
- * Return: status code
+ * Return: exit status of child process
  */
 int fork_and_execute(char *cmd, char **argv, char *argv0)
 {
 	pid_t pid;
 	int status;
+
+	(void)argv0;
 
 	pid = fork();
 	if (pid < 0)
@@ -46,7 +48,6 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 	if (pid == 0)
 	{
 		execve(cmd, argv, environ);
-		perror(argv0);
 		_exit(127);
 	}
 
@@ -58,10 +59,10 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 }
 
 /**
- * execute - fork and execute a command
+ * execute - resolve command path and execute it
  * @argv0: shell name
  * @argv: arguments array
- * @line_number: command count
+ * @line_number: command count (unused)
  *
  * Return: status code
  */
@@ -70,14 +71,19 @@ int execute(char *argv0, char **argv, int line_number)
 	char *cmd;
 	int status;
 
+	(void)line_number; /* suppress unused parameter warning */
+
 	if (!argv || !argv[0])
 		return (1);
 
 	cmd = strchr(argv[0], '/') ? argv[0] : find_command_in_path(argv[0]);
-	if (!cmd)
+
+	/* Command must exist and be executable BEFORE fork */
+	if (!cmd || access(cmd, X_OK) != 0)
 	{
-		fprintf(stderr, "%s: %d: %s: not found\n",
-			argv0, line_number, argv[0]);
+		fprintf(stderr, "%s: %s: not found\n", argv0, argv[0]);
+		if (cmd && cmd != argv[0])
+			free(cmd);
 		return (127);
 	}
 
