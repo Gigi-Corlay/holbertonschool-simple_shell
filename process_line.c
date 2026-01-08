@@ -98,13 +98,7 @@ void process_line(char *argv0, char **args, char *line, int *line_number)
 		return;
 
 	if (handle_builtin(argv0, args, line, line_number))
-	{
-		free(args);
-		free(line);
 		return;
-	}
 
 	execute(argv0, args, *line_number);
-	free(args);
-	free(line);
 }

@@ -1,6 +1,7 @@
 #include "main.h"
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /**
 * build_full_path - build full path for a command
@@ -26,8 +27,7 @@ char *build_full_path(char *dir, char *cmd)
 		need_slash = 0;
 
 	len = strlen(dir) + strlen(cmd) + (need_slash ? 2 : 1);
-
-	full = malloc(len);
+	full = malloc(len + 1);
 	if (!full)
 		return (NULL);
 
@@ -111,6 +111,7 @@ char **parse_args(char *line)
 	if (!line)
 		return (NULL);
 
+	/* allouer 64 pointeurs directement */
 	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
@@ -118,7 +119,19 @@ char **parse_args(char *line)
 	token = strtok(line, " \t\n");
 	while (token && i < 63)
 	{
-		argv[i++] = token;
+		size_t tlen = strlen(token);
+
+		argv[i] = malloc(tlen + 1);
+		if (!argv[i])
+		{
+			for (int j = 0; j < i; j++)
+
+				free(argv[j]);
+			free(argv);
+			return (NULL);
+		}
+		strcpy(argv[i], token);
+		i++;
 		token = strtok(NULL, " \t\n");
 	}
 	argv[i] = NULL;

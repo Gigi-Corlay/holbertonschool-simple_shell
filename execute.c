@@ -1,14 +1,13 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
 /**
-* get_path_from_environ - get PATH value from environment
+* get_path_from_environ - get PATH environment variable
 *
-* Return: pointer to PATH value or NULL
+* Return: pointer to PATH string, or NULL if not found
 */
 char *get_path_from_environ(void)
 {
@@ -25,11 +24,11 @@ char *get_path_from_environ(void)
 
 /**
 * fork_and_execute - forks and executes a command
-* @cmd: full path to the executable
+* @cmd: full path to executable
 * @argv: arguments array
-* @argv0: shell name
+* @argv0: shell name (used in error messages)
 *
-* Return: exit status of the child process
+* Return: exit status of child process
 */
 int fork_and_execute(char *cmd, char **argv, char *argv0)
 {
@@ -47,31 +46,30 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 
 	if (pid == 0)
 	{
-	execve(cmd, argv, environ);
-	perror(argv[0]);
-	_exit(127);
+		execve(cmd, argv, environ);
+		perror(argv[0]);
+		_exit(127);
 	}
 
 	waitpid(pid, &status, 0);
 
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+
 	return (1);
 }
 
 /**
 * resolve_command_path - returns the full path of a command
-* @argv0: shell name (used for error messages)
+* @argv0: shell name (used in error messages)
 * @cmd: command to execute
-* @line_number: command line number
+* @line_number: line number (used in error messages)
 *
-* Return: malloc'ed full path or NULL if not found
+* Return: malloc'ed path string or NULL if not found
 */
 char *resolve_command_path(char *argv0, char *cmd, int line_number)
 {
 	char *full_path;
-
-	size_t len;
 
 	if (!cmd || cmd[0] == '\0')
 		return (NULL);
@@ -80,12 +78,10 @@ char *resolve_command_path(char *argv0, char *cmd, int line_number)
 	{
 		if (access(cmd, X_OK) == 0)
 		{
-			len = strlen(cmd) + 1;
-			full_path = malloc(len);
+			full_path = malloc(strlen(cmd) + 1);
 			if (!full_path)
 				return (NULL);
-			/* manually copy string */
-			memcpy(full_path, cmd, len);
+			sprintf(full_path, "%s", cmd);
 			return (full_path);
 		}
 		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
@@ -102,20 +98,18 @@ char *resolve_command_path(char *argv0, char *cmd, int line_number)
 	return (full_path);
 }
 
-
 /**
-* execute - execute a command
+* execute - executes a command
 * @argv0: shell name
 * @argv: arguments array
-* @line_number: command line number
+* @line_number: current line number
 *
-* Return: status code
+* Return: exit status of the command
 */
 int execute(char *argv0, char **argv, int line_number)
 {
 	char *cmd_path;
 
-	pid_t pid;
 	int status;
 
 	if (!argv || !argv[0])
@@ -125,33 +119,15 @@ int execute(char *argv0, char **argv, int line_number)
 	if (!cmd_path)
 		return (127);
 
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		free(cmd_path);
-		return (1);
-	}
-
-	if (pid == 0)  /* child */
-	{
-		execve(cmd_path, argv, environ);
-		perror(argv[0]);
-		_exit(127);
-	}
-
-	waitpid(pid, &status, 0);
+	status = fork_and_execute(cmd_path, argv, argv0);
 
 	free(cmd_path);
 
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-
-	return (1);
+	return (status);
 }
 
 /**
-* handle_env - print environment variables
+* handle_env - prints all environment variables
 * @args: unused
 */
 void handle_env(char **args)
@@ -159,6 +135,10 @@ void handle_env(char **args)
 	int i = 0;
 
 	(void)args;
+
 	while (environ[i])
-		printf("%s\n", environ[i++]);
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
 }
