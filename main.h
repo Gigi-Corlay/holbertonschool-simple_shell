@@ -20,6 +20,7 @@ int handle_cd(char **args);
 int handle_exit(char **args, char *line, char *argv0, int *line_number);
 void handle_env(char **args);
 int handle_builtin(char *argv0, char **args, char *line, int *line_number);
+int handle_pwd(void);
 
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
@@ -29,6 +30,7 @@ char *get_path_from_environ(void);
 /* Parsing */
 char **parse_args(char *line);
 char *trim_and_get_command(char *line);
+char *check_token_for_cmd(char *cmd, char *token);
 
 /* Shell I/O */
 void print_prompt(void);

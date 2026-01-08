@@ -47,8 +47,9 @@ int fork_and_execute(char *cmd, char **argv, char *argv0)
 
 	if (pid == 0)
 	{
-		execve(cmd, argv, environ);
-		_exit(127);
+	execve(cmd, argv, environ);
+	perror(argv[0]);
+	_exit(127);
 	}
 
 	waitpid(pid, &status, 0);
@@ -70,25 +71,37 @@ char *resolve_command_path(char *argv0, char *cmd, int line_number)
 {
 	char *full_path;
 
+	size_t len;
+
+	if (!cmd || cmd[0] == '\0')
+		return (NULL);
+
 	if (strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == 0)
-			return (cmd);
+		{
+			len = strlen(cmd) + 1;
+			full_path = malloc(len);
+			if (!full_path)
+				return (NULL);
+			/* manually copy string */
+			memcpy(full_path, cmd, len);
+			return (full_path);
+		}
 		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
 		return (NULL);
 	}
 
 	full_path = find_command_in_path(cmd);
-	if (!full_path || access(full_path, X_OK) != 0)
+	if (!full_path)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
-		if (full_path)
-			free(full_path);
 		return (NULL);
 	}
 
 	return (full_path);
 }
+
 
 /**
 * execute - execute a command
@@ -102,6 +115,7 @@ int execute(char *argv0, char **argv, int line_number)
 {
 	char *cmd_path;
 
+	pid_t pid;
 	int status;
 
 	if (!argv || !argv[0])
@@ -111,12 +125,29 @@ int execute(char *argv0, char **argv, int line_number)
 	if (!cmd_path)
 		return (127);
 
-	status = fork_and_execute(cmd_path, argv, argv0);
-
-	if (cmd_path != argv[0])
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
 		free(cmd_path);
+		return (1);
+	}
 
-	return (status);
+	if (pid == 0)  /* child */
+	{
+		execve(cmd_path, argv, environ);
+		perror(argv[0]);
+		_exit(127);
+	}
+
+	waitpid(pid, &status, 0);
+
+	free(cmd_path);
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+
+	return (1);
 }
 
 /**

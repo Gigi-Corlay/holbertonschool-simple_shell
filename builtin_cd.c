@@ -5,18 +5,18 @@
 #include <stdio.h>
 
 /**
- * get_cd_path - determines the path for the cd command
- * @args: array of command arguments
- * @oldpwd: previous working directory
- *
- * Return: path to change to, or NULL on failure
- *
- * This static function is used only in this file.
- * It handles:
- *   - "cd -" : returns the previous directory
- *   - "cd" with no argument : returns HOME
- *   - "cd <path>" : returns the given path
- */
+* get_cd_path - determines the path for the cd command
+* @args: array of command arguments
+* @oldpwd: previous working directory
+*
+* Return: path to change to, or NULL on failure
+*
+* This static function is used only in this file.
+* It handles:
+*   - "cd -" : returns the previous directory
+*   - "cd" with no argument : returns HOME
+*   - "cd <path>" : returns the given path
+*/
 static char *get_cd_path(char **args, char *oldpwd)
 {
 	char *path;
@@ -47,18 +47,20 @@ static char *get_cd_path(char **args, char *oldpwd)
 }
 
 /**
- * handle_cd - changes the current working directory
- * @args: array of arguments for the cd command
- *
- * Return: 0 on success, 1 on failure
- *
- * This function automatically updates the previous working directory (OLDPWD)
- * and handles errors such as "HOME not set" or "OLDPWD not set".
- */
+* handle_cd - changes the current working directory
+* @args: array of arguments for the cd command
+*
+* Return: 0 on success, 1 on failure
+*
+* This function automatically updates the previous working directory (OLDPWD)
+* and handles errors such as "HOME not set" or "OLDPWD not set".
+*/
 int handle_cd(char **args)
 {
 	static char *oldpwd;
+
 	char cwd[1024];
+
 	char *path;
 
 	if (!getcwd(cwd, sizeof(cwd)))
@@ -75,7 +77,13 @@ int handle_cd(char **args)
 	}
 
 	free(oldpwd);
-	oldpwd = strdup(cwd);
+
+	oldpwd = malloc(strlen(cwd) + 1);
+
+	if (!oldpwd)
+		return (1);
+
+	strcpy(oldpwd, cwd);
 
 	return (0);
 }

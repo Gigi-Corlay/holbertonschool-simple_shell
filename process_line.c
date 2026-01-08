@@ -5,6 +5,25 @@
 #include <stdio.h>
 
 /**
+* handle_pwd - print the current working directory
+*
+* Return: 0 on success, 1 on failure
+*/
+int handle_pwd(void)
+{
+	char cwd[1024];
+
+	if (!getcwd(cwd, sizeof(cwd)))
+	{
+		perror("pwd");
+		return (1);
+	}
+
+	printf("%s\n", cwd);
+	return (0);
+}
+
+/**
 * handle_exit - exits the shell if command is "exit"
 * @args: arguments array
 * @line: original input line
@@ -48,16 +67,18 @@ int handle_builtin(char *argv0, char **args, char *line, int *line_number)
 	if (strcmp(args[0], "cd") == 0)
 	{
 		handle_cd(args);
-		free(args);
-		free(line);
 		return (1);
 	}
 
 	if (strcmp(args[0], "env") == 0)
 	{
 		handle_env(args);
-		free(args);
-		free(line);
+		return (1);
+	}
+
+	if (strcmp(args[0], "pwd") == 0)
+	{
+		handle_pwd();
 		return (1);
 	}
 
@@ -65,41 +86,23 @@ int handle_builtin(char *argv0, char **args, char *line, int *line_number)
 }
 
 /**
- * update_oldpwd - updates the previous working directory
- * @cwd: current working directory
- * @oldpwd: pointer to oldpwd
- *
- * Return: 0 on success, 1 on failure
- */
-int update_oldpwd(char *cwd, char **oldpwd)
-{
-	char *new_oldpwd;
-
-	new_oldpwd = malloc(strlen(cwd) + 1);
-	if (!new_oldpwd)
-		return (1);
-
-	strcpy(new_oldpwd, cwd);
-	free(*oldpwd);
-	*oldpwd = new_oldpwd;
-
-	return (0);
-}
-
-/**
- * process_line - processes a single command line
- * @argv0: name of the shell (used for error messages)
- * @args: parsed arguments from the input line
- * @line: original input line
- * @line_number: pointer to the current line number (used for error messages)
- */
+* process_line - processes a single command line
+* @argv0: name of the shell (used for error messages)
+* @args: parsed arguments from the input line
+* @line: original input line
+* @line_number: pointer to the current line number (used for error messages)
+*/
 void process_line(char *argv0, char **args, char *line, int *line_number)
 {
 	if (!args || !args[0])
 		return;
 
 	if (handle_builtin(argv0, args, line, line_number))
+	{
+		free(args);
+		free(line);
 		return;
+	}
 
 	execute(argv0, args, *line_number);
 	free(args);
