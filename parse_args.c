@@ -103,37 +103,38 @@ char *find_command_in_path(char *cmd)
 char **parse_args(char *line)
 {
 	char **argv;
-
 	char *token;
-
 	int i = 0;
 
 	if (!line)
 		return (NULL);
 
-	/* allouer 64 pointeurs directement */
 	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
+
 	token = strtok(line, " \t\n");
 	while (token && i < 63)
 	{
-		size_t tlen = strlen(token);
+		size_t len = strlen(token);
 
-		argv[i] = malloc(tlen + 1);
+		argv[i] = malloc(len + 1);
 		if (!argv[i])
 		{
+
 			for (int j = 0; j < i; j++)
 
 				free(argv[j]);
 			free(argv);
 			return (NULL);
 		}
+
 		strcpy(argv[i], token);
 		i++;
 		token = strtok(NULL, " \t\n");
 	}
+
 	argv[i] = NULL;
 
 	return (argv);
