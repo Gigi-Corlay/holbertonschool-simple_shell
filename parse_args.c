@@ -44,7 +44,7 @@ char *find_command_in_path(char *cmd)
 	if (!cmd)
 		return (NULL);
 
-	path_env = get_path_from_environ();
+	path_env = get_env_value("PATH");
 	if (!path_env)
 		return (NULL);
 

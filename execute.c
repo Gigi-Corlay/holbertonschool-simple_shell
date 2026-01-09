@@ -6,24 +6,6 @@
 #include <sys/wait.h>
 
 /**
-* get_path_from_environ - get PATH value from environment
-*
-* Return: pointer to PATH value or NULL
-*/
-char *get_path_from_environ(void)
-{
-	int i = 0;
-
-	while (environ[i])
-	{
-		if (strncmp(environ[i], "PATH=", 5) == 0)
-			return (environ[i] + 5);
-		i++;
-	}
-	return (NULL);
-}
-
-/**
 * fork_and_execute - forks and executes a command
 * @cmd: full path to the executable
 * @argv: arguments array

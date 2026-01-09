@@ -25,7 +25,6 @@ char *get_env_value(const char *name);
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
 char *find_command_in_path(char *cmd);
-char *get_path_from_environ(void);
 
 /* Parsing */
 char **parse_args(char *line);
