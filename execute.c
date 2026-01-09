@@ -1,115 +1,120 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/wait.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 /**
-* fork_and_execute - forks and executes a command
-* @cmd: full path to the executable
-* @argv: arguments array
-* @argv0: shell name
-*
-* Return: exit status of the child process
+* get_path_from_environ - Returns PATH string from environment
+* Return: Pointer to PATH or NULL
 */
-int fork_and_execute(char *cmd, char **argv, char *argv0)
+char *get_path_from_environ(void)
 {
-	pid_t pid;
-	int status;
+	int i = 0;
 
-	(void)argv0;
-
-	pid = fork();
-	if (pid < 0)
+	while (environ[i])
 	{
-		perror("fork");
-		return (1);
+		if (strncmp(environ[i], "PATH=", 5) == 0)
+			return (environ[i] + 5);
+		i++;
 	}
-
-	if (pid == 0)
-	{
-		execve(cmd, argv, environ);
-		_exit(127);
-	}
-
-	waitpid(pid, &status, 0);
-
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (1);
+	return (NULL);
 }
 
 /**
-* resolve_command_path - returns the full path of a command
-* @argv0: shell name (used for error messages)
-* @cmd: command to execute
-* @line_number: command line number
-*
-* Return: malloc'ed full path or NULL if not found
+* find_command_in_path - Searches command in PATH directories
+* @cmd: Command to search
+* Return: Malloc'ed full path if found, NULL otherwise
 */
-char *resolve_command_path(char *argv0, char *cmd, int line_number)
+char *find_command_in_path(char *cmd)
 {
-	char *full_path;
+	char *path, *copy, *token, *full;
 
-	if (strchr(cmd, '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (cmd);
-		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
+	size_t len;
+
+	path = get_path_from_environ();
+	if (!path)
 		return (NULL);
+
+	copy = malloc(strlen(path) + 1);
+	if (!copy)
+		return (NULL);
+	strcpy(copy, path);
+
+	token = strtok(copy, ":");
+	while (token)
+	{
+		len = strlen(token) + strlen(cmd) + 2;
+		full = malloc(len);
+		if (!full)
+		{
+			free(copy);
+			return (NULL);
+		}
+		strcpy(full, token);
+		strcat(full, "/");
+		strcat(full, cmd);
+
+		if (access(full, X_OK) == 0)
+		{
+			free(copy);
+			return (full);
+		}
+		free(full);
+		token = strtok(NULL, ":");
 	}
 
-	full_path = find_command_in_path(cmd);
-	if (!full_path || access(full_path, X_OK) != 0)
-	{
-		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, cmd);
-		if (full_path)
-			free(full_path);
-		return (NULL);
-	}
-
-	return (full_path);
+	free(copy);
+	return (NULL);
 }
 
 /**
-* execute - execute a command
-* @argv0: shell name
-* @argv: arguments array
-* @line_number: command line number
-*
-* Return: status code
+* execute - Forks and executes command if it exists
+* @argv0: Shell name
+* @argv: Argument array
+* @line_number: Command number
+* Return: 0 on success, 1 on failure
 */
 int execute(char *argv0, char **argv, int line_number)
 {
 	char *cmd_path;
 
+	pid_t pid;
 	int status;
 
 	if (!argv || !argv[0])
 		return (1);
 
-	cmd_path = resolve_command_path(argv0, argv[0], line_number);
-	if (!cmd_path)
-		return (127);
+	if (strchr(argv[0], '/'))
+		cmd_path = argv[0];
+	else
+		cmd_path = find_command_in_path(argv[0]);
 
-	status = fork_and_execute(cmd_path, argv, argv0);
+	if (!cmd_path)
+	{
+		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, argv[0]);
+		return (1);
+	}
+
+	pid = fork();
+	if (pid == 0)
+	{
+		execve(cmd_path, argv, environ);
+		perror(argv0);
+		_exit(127);
+	}
+	else if (pid < 0)
+	{
+		perror("fork");
+		if (cmd_path != argv[0])
+			free(cmd_path);
+		return (1);
+	}
+
+	waitpid(pid, &status, 0);
 
 	if (cmd_path != argv[0])
 		free(cmd_path);
 
-	return (status);
-}
-
-/**
-* handle_env - print environment variables
-* @args: unused
-*/
-void handle_env(char **args)
-{
-	int i = 0;
-
-	(void)args;
-	while (environ[i])
-		printf("%s\n", environ[i++]);
+	return (0);
 }

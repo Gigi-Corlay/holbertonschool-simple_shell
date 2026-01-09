@@ -10,29 +10,21 @@
 
 extern char **environ;
 
-/* Shell loop */
+/* Shell main loop */
 void run_shell(char *argv0);
 void handle_stdin(char *argv0, int *line_number);
-void process_line(char *argv0, char **args, char *line, int *line_number);
+void process_line(char *argv0, char *line, int *line_number);
+char **parse_args(char *line);
+char *read_line(void);
+char *trim_and_get_command(char *line);
+void print_prompt(void);
 
-/* Built-ins */
-int handle_cd(char **args);
-int handle_exit(char **args, char *line, char *argv0, int *line_number);
-void handle_env(char **args);
-int handle_builtin(char *argv0, char **args, char *line, int *line_number);
-char *get_env_value(const char *name);
+/* Built-in commands */
+int handle_builtin(char *argv0, char **argv, char *line);
 
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
 char *find_command_in_path(char *cmd);
-
-/* Parsing */
-char **parse_args(char *line);
-char *trim_and_get_command(char *line);
-
-/* Shell I/O */
-void print_prompt(void);
-char *read_line(size_t *len);
 
 /* Signal handling */
 void sigint_handler(int sig);
