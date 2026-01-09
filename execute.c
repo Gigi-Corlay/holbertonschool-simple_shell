@@ -1,79 +1,38 @@
 #include "main.h"
+#include <sys/wait.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 /**
-* get_path_from_environ - Returns PATH string from environment
-* Return: Pointer to PATH or NULL
+* get_command_path - Returns the full path of a command
+* @argv0: Shell name
+* @cmd: Command name
+* Return: malloc'ed path if found, NULL otherwise
 */
-char *get_path_from_environ(void)
+char *get_command_path(char *argv0, char *cmd)
 {
-	int i = 0;
+	char *cmd_path;
 
-	while (environ[i])
-	{
-		if (strncmp(environ[i], "PATH=", 5) == 0)
-			return (environ[i] + 5);
-		i++;
-	}
-	return (NULL);
+	if (!cmd)
+		return (NULL);
+
+	if (_strchr(cmd, '/'))
+		cmd_path = handle_slash_cmd(cmd);
+	else
+		cmd_path = find_command_in_path(cmd);
+
+	if (!cmd_path)
+		fprintf(stderr, "%s: command not found: %s\n", argv0, cmd);
+
+	return (cmd_path);
 }
 
 /**
-* find_command_in_path - Searches command in PATH directories
-* @cmd: Command to search
-* Return: Malloc'ed full path if found, NULL otherwise
-*/
-char *find_command_in_path(char *cmd)
-{
-	char *path, *copy, *token, *full;
-
-	size_t len;
-
-	path = get_path_from_environ();
-	if (!path)
-		return (NULL);
-
-	copy = malloc(strlen(path) + 1);
-	if (!copy)
-		return (NULL);
-	strcpy(copy, path);
-
-	token = strtok(copy, ":");
-	while (token)
-	{
-		len = strlen(token) + strlen(cmd) + 2;
-		full = malloc(len);
-		if (!full)
-		{
-			free(copy);
-			return (NULL);
-		}
-		strcpy(full, token);
-		strcat(full, "/");
-		strcat(full, cmd);
-
-		if (access(full, X_OK) == 0)
-		{
-			free(copy);
-			return (full);
-		}
-		free(full);
-		token = strtok(NULL, ":");
-	}
-
-	free(copy);
-	return (NULL);
-}
-
-/**
-* execute - Forks and executes command if it exists
+* execute - Forks and executes a command
 * @argv0: Shell name
 * @argv: Argument array
-* @line_number: Command number
-* Return: 0 on success, 1 on failure
+* @line_number: Command line number
+* Return: Exit status of the command
 */
 int execute(char *argv0, char **argv, int line_number)
 {
@@ -82,28 +41,17 @@ int execute(char *argv0, char **argv, int line_number)
 	pid_t pid;
 	int status;
 
+	(void)line_number;
+
 	if (!argv || !argv[0])
 		return (1);
 
-	if (strchr(argv[0], '/'))
-		cmd_path = argv[0];
-	else
-		cmd_path = find_command_in_path(argv[0]);
-
+	cmd_path = get_command_path(argv0, argv[0]);
 	if (!cmd_path)
-	{
-		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, argv[0]);
-		return (1);
-	}
+		return (127);
 
 	pid = fork();
-	if (pid == 0)
-	{
-		execve(cmd_path, argv, environ);
-		perror(argv0);
-		_exit(127);
-	}
-	else if (pid < 0)
+	if (pid == -1)
 	{
 		perror("fork");
 		if (cmd_path != argv[0])
@@ -111,10 +59,21 @@ int execute(char *argv0, char **argv, int line_number)
 		return (1);
 	}
 
+	if (pid == 0) /* child */
+	{
+		execve(cmd_path, argv, environ);
+		perror(argv0);
+		_exit(126);
+	}
+
 	waitpid(pid, &status, 0);
 
 	if (cmd_path != argv[0])
 		free(cmd_path);
 
-	return (0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+
+	return (1);
 }
+

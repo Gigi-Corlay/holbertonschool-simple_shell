@@ -7,10 +7,11 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <ctype.h>
 
 extern char **environ;
 
-/* Shell main loop */
+/* ===== Shell main loop ===== */
 void run_shell(char *argv0);
 void handle_stdin(char *argv0, int *line_number);
 void process_line(char *argv0, char *line, int *line_number);
@@ -19,14 +20,24 @@ char *read_line(void);
 char *trim_and_get_command(char *line);
 void print_prompt(void);
 
-/* Built-in commands */
+/* ===== Built-in commands ===== */
 int handle_builtin(char *argv0, char **argv, char *line);
+int is_number(char *s);
 
-/* Execution */
+/* ===== Execution ===== */
 int execute(char *argv0, char **argv, int line_number);
+char *get_command_path(char *argv0, char *cmd);
 char *find_command_in_path(char *cmd);
+char *handle_slash_cmd(char *cmd);
+char *build_fullpath(char *dir, char *cmd);
+char *_getenv(const char *name);
 
-/* Signal handling */
+/* ===== Utility functions ===== */
+int _strlen(char *s);
+char *_strcpy(char *dest, char *src);
+char *_strchr(char *s, char c);
+
+/* ===== Signal handling ===== */
 void sigint_handler(int sig);
 
-#endif
+#endif /* MAIN_H */

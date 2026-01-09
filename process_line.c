@@ -10,6 +10,7 @@
 void process_line(char *argv0, char *line, int *line_number)
 {
 	char **args;
+	int builtin_executed;
 
 	if (!line)
 		return;
@@ -21,7 +22,8 @@ void process_line(char *argv0, char *line, int *line_number)
 		return;
 	}
 
-	if (!handle_builtin(argv0, args, line))
+	builtin_executed = handle_builtin(argv0, args, line);
+	if (!builtin_executed)
 		execute(argv0, args, *line_number);
 
 	free(args);

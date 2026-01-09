@@ -33,10 +33,14 @@ char *read_line(void)
 */
 char **parse_args(char *line)
 {
-	char **argv = malloc(sizeof(char *) * 64);
+	char **argv;
 
 	int i = 0;
 
+	if (!line)
+		return (NULL);
+
+	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
@@ -46,6 +50,8 @@ char **parse_args(char *line)
 		i++;
 		argv[i] = strtok(NULL, " \t");
 	}
+	argv[i] = NULL;
+
 	return (argv);
 }
 
