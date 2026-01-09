@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
+/* External environment */
 extern char **environ;
 
 /* ===== Shell main loop ===== */
@@ -22,6 +23,8 @@ void print_prompt(void);
 
 /* ===== Built-in commands ===== */
 int handle_builtin(char *argv0, char **argv, char *line);
+int builtin_exit(char *argv0, char **argv, char *line);
+int builtin_env(char *argv0);
 int is_number(char *s);
 
 /* ===== Execution ===== */
