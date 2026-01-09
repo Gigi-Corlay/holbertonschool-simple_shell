@@ -20,6 +20,7 @@ int handle_cd(char **args);
 int handle_exit(char **args, char *line, char *argv0, int *line_number);
 void handle_env(char **args);
 int handle_builtin(char *argv0, char **args, char *line, int *line_number);
+char *get_env_value(const char *name);
 
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
