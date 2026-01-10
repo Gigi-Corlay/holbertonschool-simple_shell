@@ -1,58 +1,16 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 /**
-* is_number - Checks if a string is numeric
-* @s: Input string
-* Return: 1 if number, 0 otherwise
-*/
-int is_number(char *s)
-{
-	int i = 0;
-
-	if (!s)
-		return (0);
-
-	while (s[i])
-	{
-		if (!isdigit(s[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-/**
-* handle_builtin - Handles built-in commands
-* @argv0: Shell name
-* @argv: Argument vector
-* @line: Original input line
-* Return: 1 if built-in executed, 0 otherwise
-*/
-int handle_builtin(char *argv0, char **argv, char *line)
+ * handle_builtin - Handle built-in commands
+ * @argv: Argument vector
+ * Return: 1 if builtin handled, 0 otherwise
+ */
+int handle_builtin(char **argv)
 {
 	int i;
 
 	if (_strcmp(argv[0], "exit") == 0)
-	{
-		int status = 0;
-
-		if (argv[1])
-		{
-			if (!is_number(argv[1]))
-			{
-				fprintf(stderr, "%s: exit: Illegal number: %s\n",
-						argv0, argv[1]);
-				return (1);
-			}
-			status = _atoi(argv[1]);
-		}
-		free(argv);
-		free(line);
-		exit(status);
-	}
+		exit(0);
 
 	if (_strcmp(argv[0], "env") == 0)
 	{
@@ -60,6 +18,5 @@ int handle_builtin(char *argv0, char **argv, char *line)
 			printf("%s\n", environ[i]);
 		return (1);
 	}
-
 	return (0);
 }
