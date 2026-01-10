@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /**
-* execute - Forks and executes a command
+* execute - Forks and executes a command if it exists
 * @argv0: Shell name
 * @argv: Argument array
 * @line_number: Command line number
@@ -21,10 +21,11 @@ int execute(char *argv0, char **argv, int line_number)
 		return (1);
 
 	cmd_path = find_command_in_path(argv[0]);
+
+
 	if (!cmd_path)
 	{
-		fprintf(stderr, "%s: %d: %s: not found\n",
-				argv0, line_number, argv[0]);
+		fprintf(stderr, "%s: %d: %s: not found\n", argv0, line_number, argv[0]);
 		return (127);
 	}
 
@@ -39,8 +40,8 @@ int execute(char *argv0, char **argv, int line_number)
 	if (pid == 0)
 	{
 		execve(cmd_path, argv, environ);
-		fprintf(stderr, "%s: %d: %s: exec failed\n",
-				argv0, line_number, argv[0]);
+
+		fprintf(stderr, "%s: %d: %s: exec failed\n", argv0, line_number, argv[0]);
 		free(cmd_path);
 		_exit(126);
 	}
@@ -49,7 +50,7 @@ int execute(char *argv0, char **argv, int line_number)
 	free(cmd_path);
 
 	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
+		return WEXITSTATUS(status);
 
 	return (1);
 }
