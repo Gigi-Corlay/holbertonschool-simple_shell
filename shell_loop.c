@@ -4,49 +4,60 @@
 
 /**
 * run_shell - Main shell loop
-* @argv0: Shell name (for errors)
+* @argv0: Shell name
 */
 void run_shell(char *argv0)
 {
 	int line_number = 0;
 
-	handle_stdin(argv0, &line_number);
-}
-
-/**
-* handle_stdin - Reads input lines and executes them
-* @argv0: Shell name
-* @line_number: Pointer to line counter
-*/
-void handle_stdin(char *argv0, int *line_number)
-{
-	int interactive = isatty(STDIN_FILENO);
-
 	char *line;
-	char *cmd;
+
+	char **argv;
 
 	while (1)
 	{
-		if (interactive)
+		if (isatty(STDIN_FILENO))
 			print_prompt();
 
 		line = read_line();
 		if (!line)
 		{
-			if (interactive)
+			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			exit(0);
 		}
 
-		(*line_number)++;
-		cmd = trim_and_get_command(line);
-		if (!cmd)
+		line_number++;
+		argv = parse_args(line);
+		if (!argv || !argv[0])
 		{
+			free(argv);
 			free(line);
 			continue;
 		}
 
-		process_line(argv0, line, line_number);
+		if (handle_builtin(argv0, argv, line) == 0)
+			execute(argv0, argv, line_number);
+
+		free(argv);
 		free(line);
 	}
+}
+
+/**
+* print_prompt - Prints shell prompt
+*/
+void print_prompt(void)
+{
+	write(STDOUT_FILENO, "($) ", 4);
+}
+
+/**
+* sigint_handler - Handles Ctrl+C
+* @sig: Signal number
+*/
+void sigint_handler(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n($) ", 5);
 }

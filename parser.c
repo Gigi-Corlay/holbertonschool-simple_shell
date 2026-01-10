@@ -1,6 +1,6 @@
 #include "main.h"
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 /**
 * read_line - Reads a line from stdin
@@ -27,52 +27,46 @@ char *read_line(void)
 }
 
 /**
-* parse_args - Splits a line into arguments
+* parse_args - Splits line into argv array
 * @line: Input line
-* Return: NULL-terminated array of arguments
+* Return: NULL-terminated array
 */
 char **parse_args(char *line)
 {
-	char **argv;
+	char **argv = malloc(sizeof(char *) * 64);
+
+	char *token;
 
 	int i = 0;
 
-	if (!line)
-		return (NULL);
-
-	argv = malloc(sizeof(char *) * 64);
 	if (!argv)
 		return (NULL);
 
-	argv[i] = strtok(line, " \t");
-	while (argv[i] && i < 63)
+	token = strtok(line, " \t");
+	while (token && i < 63)
 	{
-		i++;
-		argv[i] = strtok(NULL, " \t");
+		argv[i++] = token;
+		token = strtok(NULL, " \t");
 	}
 	argv[i] = NULL;
-
 	return (argv);
 }
 
 /**
-* trim_and_get_command - Trims leading spaces and returns first word
+* trim_and_get_command - Returns first word (skip leading spaces)
 * @line: Input line
-* Return: Pointer to first command or NULL if empty
+* Return: Pointer to first word
 */
 char *trim_and_get_command(char *line)
 {
-	char *trimmed;
-
 	if (!line)
 		return (NULL);
 
-	trimmed = line;
-	while (*trimmed == ' ' || *trimmed == '\t')
-		trimmed++;
+	while (*line == ' ' || *line == '\t')
+		line++;
 
-	if (*trimmed == '\0')
+	if (*line == '\0')
 		return (NULL);
 
-	return (trimmed);
+	return (line);
 }

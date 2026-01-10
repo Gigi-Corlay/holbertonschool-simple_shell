@@ -1,11 +1,11 @@
-#include <signal.h>
 #include "main.h"
+#include <signal.h>
 
 /**
-* main - Entry point for the shell
-* @argc: number of arguments
-* @argv: argument array
-* Return: Always 0
+* main - Entry point of the shell
+* @argc: Argument count
+* @argv: Argument vector
+* Return: 0 on success
 */
 int main(int argc, char **argv)
 {
