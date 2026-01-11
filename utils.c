@@ -1,9 +1,9 @@
 #include "main.h"
 
 /**
-* _strlen - Returns the length of a string
+* _strlen - Returns length of string
 * @s: Input string
-* Return: Length of the string
+* Return: Length
 */
 int _strlen(char *s)
 {
@@ -17,9 +17,9 @@ int _strlen(char *s)
 }
 
 /**
-* _strcpy - Copies a string from src to dest
-* @dest: Destination buffer
-* @src: Source string
+* _strcpy - Copies string from src to dest
+* @dest: Destination
+* @src: Source
 * Return: Pointer to dest
 */
 char *_strcpy(char *dest, char *src)
@@ -59,37 +59,10 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
-* _atoi - Converts a string to integer
+* _strchr - Locates first occurrence of c in s
 * @s: Input string
-* Return: Converted integer value
-*/
-int _atoi(char *s)
-{
-	int i = 0, sign = 1, res = 0;
-
-	if (!s)
-		return (0);
-	while (s[i] == ' ' || s[i] == '\t')
-		i++;
-	if (s[i] == '-' || s[i] == '+')
-	{
-		if (s[i] == '-')
-			sign = -1;
-		i++;
-	}
-	while (s[i] >= '0' && s[i] <= '9')
-	{
-		res = res * 10 + (s[i] - '0');
-		i++;
-	}
-	return (res * sign);
-}
-
-/**
-* _strchr - Locates first occurrence of character in string
-* @s: Input string
-* @c: Character to locate
-* Return: Pointer to first occurrence or NULL if not found
+* @c: Character to find
+* Return: Pointer to first occurrence or NULL
 */
 char *_strchr(char *s, char c)
 {

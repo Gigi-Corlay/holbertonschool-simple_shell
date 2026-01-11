@@ -1,28 +1,46 @@
 #include "main.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /**
-* handle_builtin - Executes exit and env built-ins
+* exit_shell - Frees memory and exits shell
+* @line: Input line
 * @argv: Argument array
-* @line: Original input line
-* Return: 1 if executed, 0 otherwise
+* Return: void (exits)
 */
-int handle_builtin(char **argv, char *line)
+static void exit_shell(char *line, char **argv)
+{
+	free(line);
+	free(argv);
+	exit(0);
+}
+
+/**
+* print_env - Prints environment variables
+* Return: void
+*/
+static void print_env(void)
 {
 	int i;
 
+	for (i = 0; environ[i]; i++)
+		printf("%s\n", environ[i]);
+}
+
+/**
+* handle_builtin - Executes built-in commands
+* @argv: Argument array
+* @line: Input line
+* Return: 1 if built-in executed, 0 otherwise
+*/
+int handle_builtin(char **argv, char *line)
+{
 	if (_strcmp(argv[0], "exit") == 0)
-	{
-		free(line);
-		free(argv);
-		exit(0);
-	}
+		exit_shell(line, argv);
 
 	if (_strcmp(argv[0], "env") == 0)
 	{
-		for (i = 0; environ[i]; i++)
-			printf("%s\n", environ[i]);
+		print_env();
 		return (1);
 	}
 

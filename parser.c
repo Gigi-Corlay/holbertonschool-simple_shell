@@ -4,7 +4,7 @@
 
 /**
 * read_line - Reads a line from standard input
-* Return: Pointer to the line, NULL on EOF
+* Return: Pointer to line, NULL on EOF
 */
 char *read_line(void)
 {
@@ -27,17 +27,21 @@ char *read_line(void)
 /**
 * parse_args - Splits a line into arguments
 * @line: Input string
-* Return: Array of pointers to arguments (NULL-terminated)
+* Return: Array of argument pointers (NULL-terminated)
 */
 char **parse_args(char *line)
 {
-	char **argv = malloc(sizeof(char *) * 64);
+	char **argv;
 
 	char *token;
 
 	int i = 0;
 
-	if (!argv || !line)
+	if (!line)
+		return (NULL);
+
+	argv = malloc(sizeof(char *) * 64);
+	if (!argv)
 		return (NULL);
 
 	token = strtok(line, " \t");

@@ -7,8 +7,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <string.h>
+#include <signal.h>
 
-/* Accès aux variables d'environnement */
 extern char **environ;
 
 /* Shell loop */
@@ -19,25 +20,22 @@ void sigint_handler(int sig);
 /* Input / parser */
 char *read_line(void);
 char **parse_args(char *line);
-char *trim_and_get_command(char *line);
 
 /* Built-ins */
 int handle_builtin(char **argv, char *line);
 
 /* Execution */
 int execute(char *argv0, char **argv, int line_number);
-
-/* PATH utilities */
 char *find_command_in_path(char *cmd);
 char *handle_slash_cmd(char *cmd);
 char *build_fullpath(char *dir, char *cmd);
 char *_getenv(const char *name);
 
-/* Utils (string / conversion) */
+/* Utils */
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
-char *_strchr(char *s, char c);
 int _strcmp(char *s1, char *s2);
+char *_strchr(char *s, char c);
 int _atoi(char *s);
 
 #endif /* MAIN_H */
