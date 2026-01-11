@@ -1,15 +1,14 @@
 #include "main.h"
+#include <signal.h>
 
 /**
-* main - Entry point of shell
-* @argc: argument count
-* @argv: argument vector
-* Return: 0 on success
-*/
-int main(int argc, char **argv)
+ * main - Entry point for the shell
+ *
+ * Return: 0 on success
+ */
+int main(void)
 {
-	(void)argc;
-	signal(SIGINT, sigint_handler);
-	run_shell(argv[0]);
-	return (0);
+	signal(SIGINT, sigint_handler); /* handle Ctrl+C */
+	shell_loop();                   /* start shell loop */
+	return (0);                     /* exit shell process safely */
 }

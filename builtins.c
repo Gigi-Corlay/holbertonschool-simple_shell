@@ -1,48 +1,35 @@
 #include "main.h"
-#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 /**
-* exit_shell - Frees memory and exits
-* @line: Input line
-* @argv: Argument array
-* Return: void (exits)
-*/
-static void exit_shell(char *line, char **argv)
+ * handle_builtin - Handle built-in commands
+ * @args: argument array
+ *
+ * Return: -1 if exit, 1 if builtin executed, 0 otherwise
+ */
+int handle_builtin(char **args)
 {
-	free(line);
-	free(argv);
-	exit(0);
-}
+	if (strcmp(args[0], "exit") == 0)
+		return (-1);
 
-/**
-* print_env - Prints environment
-* Return: void
-*/
-static void print_env(void)
-{
-	int i;
-
-	for (i = 0; environ[i]; i++)
-		printf("%s\n", environ[i]);
-}
-
-/**
-* handle_builtin - Executes built-in commands
-* @argv: Argument array
-* @line: Input line
-* Return: 1 if built-in executed, 0 otherwise
-*/
-int handle_builtin(char **argv, char *line)
-{
-	if (_strcmp(argv[0], "exit") == 0)
-		exit_shell(line, argv);
-
-	if (_strcmp(argv[0], "env") == 0)
+	if (strcmp(args[0], "env") == 0)
 	{
-		print_env();
+		print_env(environ);
 		return (1);
 	}
 
 	return (0);
+}
+
+/**
+ * print_env - Print environment variables
+ * @envp: environment array
+ */
+void print_env(char **envp)
+{
+	int i;
+
+	for (i = 0; envp[i]; i++)
+		printf("%s\n", envp[i]);
 }

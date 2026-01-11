@@ -1,78 +1,49 @@
 #include "main.h"
-#include <stdlib.h>
-#include <unistd.h>
+#include <stdio.h>
 
 /**
-* print_prompt - Prints shell prompt
-* Return: void
+* shell_loop - Main loop of the shell
+*
+* Return: 0 on normal exit
 */
-void print_prompt(void)
-{
-	write(STDOUT_FILENO, "($) ", 4);
-}
-
-/**
-* sigint_handler - Handles Ctrl+C
-* @sig: Signal number
-* Return: void
-*/
-void sigint_handler(int sig)
-{
-	(void)sig;
-	write(STDOUT_FILENO, "\n($) ", 5);
-}
-
-/**
-* process_line - Processes one input line
-* @line: Input line
-* @argv0: Shell name
-* @line_number: Line number
-* Return: void
-*/
-static void process_line(char *line, char *argv0, int line_number)
-{
-	char **argv;
-
-	argv = parse_args(line);
-	if (!argv || !argv[0])
-	{
-		free(argv);
-		free(line);
-		return;
-	}
-
-	if (!handle_builtin(argv, line))
-		execute(argv0, argv, line_number);
-
-	free(argv);
-	free(line);
-}
-
-/**
-* run_shell - Main shell loop
-* @argv0: Name of shell
-* Return: void
-*/
-void run_shell(char *argv0)
+int shell_loop(void)
 {
 	char *line;
 
-	int line_number = 0;
+	char **args;
+
+	int status;
+
+	int eof_count = 0; /* count Ctrl+D */
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			print_prompt();
+		printf("$ ");
+		fflush(stdout);
 
 		line = read_line();
-		if (!line)
+		if (!line) /* Ctrl+D */
 		{
-			if (isatty(STDIN_FILENO))
-				write(STDOUT_FILENO, "\n", 1);
-			exit(0);
+			putchar('\n');
+			eof_count++;
+			if (eof_count >= 2) /* double Ctrl+D = exit */
+				break;
+			continue; /* ignore first EOF */
 		}
+		eof_count = 0;
 
-		line_number++;
-		process_line(line, argv0, line_number);
+		args = split_line(line);
+		free(line);
+		if (!args)
+			continue;
+
+		status = execute_input(args);
+		free_args(args);
+
+		if (status == -1)
+			printf("Le shell a quitté correctement.\n");
+				break;
 	}
+
+	return (0);
 }

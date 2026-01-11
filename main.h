@@ -3,39 +3,37 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
-#include <string.h>
 #include <signal.h>
 
 extern char **environ;
 
-/* Shell loop */
-void run_shell(char *argv0);
-void print_prompt(void);
-void sigint_handler(int sig);
+/* Core shell */
+int shell_loop(void);
+int execute_input(char **args);
 
-/* Parser */
+/* Built-in commands */
+int handle_builtin(char **args);
+void print_env(char **envp);
+
+/* Input functions */
 char *read_line(void);
-char **parse_args(char *line);
+char **split_line(char *line);
+void free_args(char **args);
 
-/* Built-ins */
-int handle_builtin(char **argv, char *line);
+/* PATH utilities */
+char *find_path(char *cmd);
 
-/* Execution */
-int execute(char *argv0, char **argv, int line_number);
-char *find_command_in_path(char *cmd);
-char *handle_slash_cmd(char *cmd);
-char *build_fullpath(char *dir, char *cmd);
-char *_getenv(const char *name);
+/* Environment utilities */
+char *get_env_value(const char *name);
 
-/* Utils */
-int _strlen(char *s);
-char *_strcpy(char *dest, char *src);
-int _strcmp(char *s1, char *s2);
-char *_strchr(char *s, char c);
-int _atoi(char *s);
+/* Utility functions */
+void remove_trailing_newline(char *line);
+
+/* Signal handling */
+void sigint_handler(int sig);
 
 #endif /* MAIN_H */
