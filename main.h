@@ -3,37 +3,44 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <signal.h>
+#include <ctype.h>
 
+/* External environment */
 extern char **environ;
 
-/* Core shell */
-int shell_loop(void);
-int execute_input(char **args);
-
-/* Built-in commands */
-int handle_builtin(char **args);
-void print_env(char **envp);
-
-/* Input functions */
+/* ===== Shell main loop ===== */
+void run_shell(char *argv0);
+void handle_stdin(char *argv0, int *line_number);
+void process_line(char *argv0, char *line, int *line_number);
+char **parse_args(char *line);
 char *read_line(void);
-char **split_line(char *line);
-void free_args(char **args);
+char *trim_and_get_command(char *line);
+void print_prompt(void);
 
-/* PATH utilities */
-char *find_path(char *cmd);
+/* ===== Built-in commands ===== */
+int handle_builtin(char *argv0, char **argv, char *line);
+int builtin_exit(char *argv0, char **argv, char *line);
+int builtin_env(char *argv0);
+int is_number(char *s);
 
-/* Environment utilities */
-char *get_env_value(const char *name);
+/* ===== Execution ===== */
+int execute(char *argv0, char **argv, int line_number);
+char *get_command_path(char *argv0, char *cmd);
+char *find_command_in_path(char *cmd);
+char *handle_slash_cmd(char *cmd);
+char *build_fullpath(char *dir, char *cmd);
+char *_getenv(const char *name);
 
-/* Utility functions */
-void remove_trailing_newline(char *line);
+/* ===== Utility functions ===== */
+int _strlen(char *s);
+char *_strcpy(char *dest, char *src);
+char *_strchr(char *s, char c);
 
-/* Signal handling */
+/* ===== Signal handling ===== */
 void sigint_handler(int sig);
 
 #endif /* MAIN_H */

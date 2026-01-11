@@ -1,49 +1,52 @@
 #include "main.h"
-#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
-* shell_loop - Main loop of the shell
-*
-* Return: 0 on normal exit
+* run_shell - Main shell loop
+* @argv0: Shell name (for errors)
 */
-int shell_loop(void)
+void run_shell(char *argv0)
 {
+	int line_number = 0;
+
+	handle_stdin(argv0, &line_number);
+}
+
+/**
+* handle_stdin - Reads input lines and executes them
+* @argv0: Shell name
+* @line_number: Pointer to line counter
+*/
+void handle_stdin(char *argv0, int *line_number)
+{
+	int interactive = isatty(STDIN_FILENO);
+
 	char *line;
-
-	char **args;
-
-	int status;
-
-	int eof_count = 0; /* count Ctrl+D */
+	char *cmd;
 
 	while (1)
 	{
-		printf("$ ");
-		fflush(stdout);
+		if (interactive)
+			print_prompt();
 
 		line = read_line();
-		if (!line) /* Ctrl+D */
+		if (!line)
 		{
-			putchar('\n');
-			eof_count++;
-			if (eof_count >= 2) /* double Ctrl+D = exit */
-				break;
-			continue; /* ignore first EOF */
+			if (interactive)
+				write(STDOUT_FILENO, "\n", 1);
+			exit(0);
 		}
-		eof_count = 0;
 
-		args = split_line(line);
-		free(line);
-		if (!args)
+		(*line_number)++;
+		cmd = trim_and_get_command(line);
+		if (!cmd)
+		{
+			free(line);
 			continue;
+		}
 
-		status = execute_input(args);
-		free_args(args);
-
-		if (status == -1)
-			printf("Le shell a quitté correctement.\n");
-				break;
+		process_line(argv0, line, line_number);
+		free(line);
 	}
-
-	return (0);
 }
