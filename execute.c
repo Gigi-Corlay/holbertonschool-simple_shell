@@ -50,7 +50,7 @@ char *build_fullpath(char *dir, char *cmd)
 }
 
 /**
-* find_command_in_path - Searches for cmd in PATH
+* find_command_in_path - Searches for command in PATH
 * @cmd: Command string
 * Return: Full path malloc'ed if found, NULL otherwise
 */

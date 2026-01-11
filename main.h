@@ -17,7 +17,7 @@ void run_shell(char *argv0);
 void print_prompt(void);
 void sigint_handler(int sig);
 
-/* Input / parser */
+/* Parser */
 char *read_line(void);
 char **parse_args(char *line);
 

@@ -3,7 +3,7 @@
 #include <string.h>
 
 /**
-* read_line - Reads a line from standard input
+* read_line - Reads a line from stdin
 * Return: Pointer to line, NULL on EOF
 */
 char *read_line(void)
@@ -25,9 +25,9 @@ char *read_line(void)
 }
 
 /**
-* parse_args - Splits a line into arguments
+* parse_args - Splits line into arguments
 * @line: Input string
-* Return: Array of argument pointers (NULL-terminated)
+* Return: Array of argument pointers
 */
 char **parse_args(char *line)
 {

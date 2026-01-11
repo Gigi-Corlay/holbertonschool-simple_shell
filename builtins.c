@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 /**
-* exit_shell - Frees memory and exits shell
+* exit_shell - Frees memory and exits
 * @line: Input line
 * @argv: Argument array
 * Return: void (exits)
@@ -16,7 +16,7 @@ static void exit_shell(char *line, char **argv)
 }
 
 /**
-* print_env - Prints environment variables
+* print_env - Prints environment
 * Return: void
 */
 static void print_env(void)

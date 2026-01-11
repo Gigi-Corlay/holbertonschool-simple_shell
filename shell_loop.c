@@ -1,9 +1,9 @@
 #include "main.h"
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /**
-* print_prompt - Prints the shell prompt
+* print_prompt - Prints shell prompt
 * Return: void
 */
 void print_prompt(void)
@@ -12,7 +12,7 @@ void print_prompt(void)
 }
 
 /**
-* sigint_handler - Handles Ctrl+C (SIGINT)
+* sigint_handler - Handles Ctrl+C
 * @sig: Signal number
 * Return: void
 */
@@ -23,10 +23,10 @@ void sigint_handler(int sig)
 }
 
 /**
-* process_line - Process a single command line
+* process_line - Processes one input line
 * @line: Input line
 * @argv0: Shell name
-* @line_number: Current line number
+* @line_number: Line number
 * Return: void
 */
 static void process_line(char *line, char *argv0, int line_number)
@@ -50,14 +50,14 @@ static void process_line(char *line, char *argv0, int line_number)
 
 /**
 * run_shell - Main shell loop
-* @argv0: Name of the shell executable
+* @argv0: Name of shell
 * Return: void
 */
 void run_shell(char *argv0)
 {
-	int line_number = 0;
-
 	char *line;
+
+	int line_number = 0;
 
 	while (1)
 	{
