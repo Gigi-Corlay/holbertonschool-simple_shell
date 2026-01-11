@@ -4,29 +4,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+/* Accès aux variables d'environnement */
 extern char **environ;
 
-/* loop */
-void shell_loop(void);
+/* Shell loop */
+void run_shell(char *argv0);
+void print_prompt(void);
+void sigint_handler(int sig);
 
-/* parser */
-char **split_line(char *line);
+/* Input / parser */
+char *read_line(void);
+char **parse_args(char *line);
+char *trim_and_get_command(char *line);
 
-/* execute */
-void execute_cmd(char **argv);
+/* Built-ins */
+int handle_builtin(char **argv, char *line);
 
-/* path */
-char *find_path(char *cmd);
+/* Execution */
+int execute(char *argv0, char **argv, int line_number);
 
-/* builtins */
-int handle_builtin(char **argv);
+/* PATH utilities */
+char *find_command_in_path(char *cmd);
+char *handle_slash_cmd(char *cmd);
+char *build_fullpath(char *dir, char *cmd);
+char *_getenv(const char *name);
 
-/* utils */
+/* Utils (string / conversion) */
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
+char *_strchr(char *s, char c);
 int _strcmp(char *s1, char *s2);
+int _atoi(char *s);
 
-#endif
+#endif /* MAIN_H */

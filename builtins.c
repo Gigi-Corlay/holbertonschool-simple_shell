@@ -1,16 +1,23 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
- * handle_builtin - Handle built-in commands
- * @argv: Argument vector
- * Return: 1 if builtin handled, 0 otherwise
- */
-int handle_builtin(char **argv)
+* handle_builtin - Executes exit and env built-ins
+* @argv: Argument array
+* @line: Original input line
+* Return: 1 if executed, 0 otherwise
+*/
+int handle_builtin(char **argv, char *line)
 {
 	int i;
 
 	if (_strcmp(argv[0], "exit") == 0)
+	{
+		free(line);
+		free(argv);
 		exit(0);
+	}
 
 	if (_strcmp(argv[0], "env") == 0)
 	{
@@ -18,5 +25,6 @@ int handle_builtin(char **argv)
 			printf("%s\n", environ[i]);
 		return (1);
 	}
+
 	return (0);
 }
