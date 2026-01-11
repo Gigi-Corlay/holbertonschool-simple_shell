@@ -211,6 +211,7 @@ All code must pass the Betty style checker and be verified with Valgrind to ensu
 ├── execute.c
 ├── run_shell.c
 ├── process_line.c
+├── building_cd.c
 ├── main.h
 ├── man_1_simple_shell
 ├── AUTHORS
