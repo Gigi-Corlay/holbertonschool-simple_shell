@@ -27,16 +27,20 @@
 
 ## 📌 Description
 **Simple Shell** is a minimalist UNIX command interpreter written in **C**. 
-It replicates the basic behavior of a standard shell (`/bin/sh`) for typical commands. 
-The shell reads user input, parses it into commands, searches for executables in the `PATH`, and runs them using system calls like `fork`, `execvev`, and `wait`.
-Its behavior is designed to match standard shell behavior for common use cases
+It replicates basic behavior of a standard shell (`/bin/sh`). The shell: 
+- Reads user input (interactive or from files/pipes)
+- Parses input into commands and arguments
+- Searches for executables in the `PATH` environment variable 
+- Executes commands using `fork`, `execvev`, and `waitpid()`
+- Implements built-ins like `env` and `exit`
+- Handles errors and memory safely
 
 ---
 
 ## ✅ Project Objectives
 
 **The main objectives of this project are to:**
-- Implement a **minimal UNIX shell** in C
+- Implement a **minimal UNIX shell** in **C**
 - Support both **interactive** and **non-interactive** modes
 - Understand **process creation and management**
 - Parse user input into executable commands
@@ -48,19 +52,19 @@ Its behavior is designed to match standard shell behavior for common use cases
 ---
 
 ## 🔁 Flowchart
-> This flowchart illustrates the shell’s main process: reading the command, parsing it, executing built-ins, searching the PATH, and executing the command.
+> This flowchart illustrates the shell’s main process: reading the command, parsing it, executing built-in, searching the PATH, and executing the command.
 ```mermaid
 flowchart TD
     A[Start] --> B{"isatty(STDIN_FILENO)"}
 
     B -- Yes --> C[Interactive mode]
-    B -- No --> D[Non interactive mode]
+    B -- No --> D[Non-interactive mode]
 
     C --> E["while (1)"]
     D --> E
 
     E --> F[Print prompt $]
-    F --> G[Read input with getline]
+    F --> G[Read input]
 
     G --> H{EOF or error}
     H -- Yes --> I[Exit shell]
@@ -71,11 +75,11 @@ flowchart TD
     K --> L{Empty command}
     L -- Yes --> E
 
-    L -- No --> M{Built in command}
-    M -- Yes --> N[Execute built in]
+    L -- No --> M{Built-in command}
+    M -- Yes --> N[Execute built-in]
     N --> E
 
-    M -- No --> O[Search command in PATH]
+    M -- No --> O[Resolve command path]
 
     O --> P{Command found}
     P -- No --> Q[Print error: command not found]
@@ -87,7 +91,7 @@ flowchart TD
     S -- Child --> T[Execute command with execve]
     T --> U{execve failed}
     U -- Yes --> V[Print error and exit]
-    U -- No --> W[Child process executes]
+    U -- No --> W[Child executes]
 
     S -- Parent --> X[Wait child]
     X --> E
@@ -150,41 +154,22 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 ```
 ---
 
-## ▶️ Testing
-#### Interactive mode
+## ▶️ Usage
+#### Interactive Mode
 
 **Your shell should work properly in interactive mode:**
 ```bash
-julien@ubuntu:/# ./hsh
+$ ./hsh
 ($) /bin/ls
-hsh main.c shell.c
-($)
+AUTHORS  main.c  execute.c  shell.c
+($) ls
+AUTHORS  main.c  execute.c  shell.c
+($) pwd
+/home/user/simple_shell
+($) env
+# prints environment variables
 ($) exit
-julien@ubuntu:/#
-```
-**In this mode, the shell:**
-- Displays a prompt
-- Waits for user input
-- Executes commands
-- Exits cleanly when exit is entered
-
----
-### Non-interactive mode
-
-Your shell must also work in **non-interactive mode**, receiving input from standard input:
-```bash
-julien@ubuntu:/# echo "/bin/ls" | ./hsh
-hsh main.c shell.c test_ls_2
-```
-**It should correctly handle input from files and pipes:**
-```bash
-julien@ubuntu:/# cat test_ls_2
-/bin/ls
-/bin/ls
-
-julien@ubuntu:/# cat test_ls_2 | ./hsh
-hsh main.c shell.c test_ls_2
-hsh main.c shell.c test_ls_2
+$
 ```
 ---
 
@@ -204,12 +189,15 @@ All code must pass the Betty style checker and be verified with Valgrind to ensu
 ## ✨ Features
 - Executes commands entered by the user
 - Supports **interactive** and **non-interactive** modes
+- Resolves full paths using resolve_command_path()
+- Executes commands via fork_and_execute()
 - Searches for executables using the `PATH` environment variable
 - Uses system calls such as `fork`, `execve`, and `wait`
-- Implements the following built-in commands:
+- Built-in commands implemented:
     - `exit` – exits the shell
     - `env` – prints the current environment
-- Handles errors such as command not found
+- Handles errors gracefully (command not found, permission denied)
+- Memory safe (frees all `malloc` allocations)
 
 ---
 
@@ -219,11 +207,11 @@ All code must pass the Betty style checker and be verified with Valgrind to ensu
 .
 ├── main.c
 ├── shell.c
-├── parser.c
+├── parse_args.c
 ├── execute.c
-├── builtins.c
-├── utils.c
-├── shell.h
+├── run_shell.c
+├── process_line.c
+├── main.h
 ├── man_1_simple_shell
 ├── AUTHORS
 └── README.md
@@ -239,18 +227,18 @@ man ./man_1_simple_shell
 
 ## 🚫 Limitations
 - No pipes (`|`)
-- No redirections (`>`, `<`)
-- No command chaining `;`, `&&`, `||`)
-- Commands with quotes are not supported
+- No redirections (`>` or `<`)
+- No command chaining (`;`, `&&`, `||`)
+- Commands with quotes or complex arguments are not supported
 
 ---
 
 ## 🧪 Coding Style and Constraints
-- Written in C
-- Complies with the Betty coding style
-- Compiled on Ubuntu 20.04
-- Uses only allowed system calls and standard library functions
-- No memory leaks (checked with valgrind)
+- Written in **C**
+- Betty compliant
+- Tested on Ubuntu 20.04
+- Only allowed system calls are used
+- No memory leaks (Valgrind tested)
 
 ---
 
